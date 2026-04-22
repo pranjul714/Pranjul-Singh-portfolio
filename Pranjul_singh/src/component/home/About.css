@@ -1,0 +1,120 @@
+
+
+.about-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px;
+  background-color: #fcfcfc; /* Light background to pop the card */
+}
+
+.about-card {
+  background: white;
+  border-radius: 40px;
+  padding: 60px;
+  max-width: 1100px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+  align-items: center;
+}
+
+/* Star and Image Styling */
+.about-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-shape {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  z-index: 1;
+  opacity: 0.9;
+}
+
+.about-avatar {
+  position: relative;
+  z-index: 2;
+  width: 80%;
+  height: auto;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+}
+
+/* Floating Badges */
+.floating-icons .icon-badge {
+  position: absolute;
+  z-index: 3;
+  padding: 10px 15px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  font-weight: bold;
+}
+
+.js { top: 20%; right: 5%; background: #F7DF1E !important; }
+.react { top: 10%; left: 10%; font-size: 24px; }
+
+/* Text Content Styling */
+.about-title {
+  font-size: 42px;
+  color: #ff8533; /* Orange theme from your image */
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.about-description-box {
+  background: #f9f9f9;
+  padding: 25px;
+  border-radius: 15px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  border-left: 5px solid #ff8533;
+}
+
+.stats-grid {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.stat-item h3 {
+  font-size: 28px;
+  color: #ff8533;
+  margin: 0;
+}
+
+.stat-item p {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+}
+
+.learn-more-btn {
+  background: white;
+  border: 2px solid #ff8533;
+  color: #ff8533;
+  padding: 12px 35px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.learn-more-btn:hover {
+  background: #ff8533;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .about-card { grid-template-columns: 1fr; text-align: center; }
+  .about-visual { order: 2; }
+  .about-description-box { border-left: none; border-top: 5px solid #ff8533; }
+  .stats-grid { justify-content: center; }
+}
