@@ -3,7 +3,6 @@ import { Download, Rocket, Globe } from "lucide-react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import images from "../assets/img";
 import myCV from "../assets/Pranjul_Singh.pdf";
-import ParticleBackground from "../components/ParticleBackground";
 
 export default function MainPage() {
 
@@ -61,10 +60,8 @@ export default function MainPage() {
 
   return (
     <section
-      id="home"
-      className="relative min-h-screen w-full flex items-center justify-center px-6 lg:px-24 py-20 overflow-hidden bg-black"
+      className="relative min-h-[80vh] w-full flex items-center justify-center px-6 lg:px-24 py-20"
     >
-      <ParticleBackground />
       {/* Background Glow */}
       <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-zinc-500/5 rounded-full blur-3xl -z-10 animate-breathe" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-zinc-100/5 rounded-full blur-3xl -z-10 animate-floatSlow" />

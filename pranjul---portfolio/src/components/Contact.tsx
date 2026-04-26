@@ -34,9 +34,8 @@ export default function Contact() {
   });
 
   return (
-    <section className="relative py-32 px-6 lg:px-24 bg-black overflow-hidden min-h-screen flex flex-col items-center justify-center">
+    <section className="relative py-32 px-6 lg:px-24 overflow-hidden min-h-screen flex flex-col items-center justify-center">
        
-        <ParticleBackground />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] -z-10 animate-pulse" />
 
       <motion.div 

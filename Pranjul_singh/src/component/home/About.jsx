@@ -5,13 +5,17 @@ import { User, Award, CheckCircle2 } from "lucide-react";
 import { getAboutData } from "../../services/api";
 
 export default function About() {
-  const [aboutText, setAboutText] = React.useState("I am a passionate Full-Stack Developer focused on building scalable web applications with clean architecture and elegant user experiences.");
+  const [aboutData, setAboutData] = React.useState({
+    bio: "I am a passionate Full-Stack Developer focused on building scalable web applications with clean architecture and elegant user experiences.",
+    experience_years: "fresher",
+    education: ""
+  });
 
   React.useEffect(() => {
     const fetchAbout = async () => {
       try {
         const { data } = await getAboutData();
-        if (data && data.text) setAboutText(data.text);
+        if (data) setAboutData(data);
       } catch (error) {
         console.error("Failed to fetch about data:", error);
       }
@@ -20,9 +24,9 @@ export default function About() {
   }, []);
 
   const statsData = [
-    { label: "", value: "fresher", icon: <Award size={20} /> },
-    { label: "Projects Completed", value: "4+", icon: <CheckCircle2 size={20} /> },
-    { label: "Technologies", value: "6+", icon: <User size={20} /> },
+    { label: "", value: aboutData.experience_years || "fresher", icon: <Award size={20} /> },
+    { label: "Education", value: aboutData.education || "B.Tech", icon: <CheckCircle2 size={20} /> },
+    { label: "Status", value: "Active", icon: <User size={20} /> },
   ];
 
   return (
@@ -86,7 +90,7 @@ export default function About() {
           <motion.p
             className="text-lg text-emerald-100/70 leading-relaxed max-w-xl font-medium"
           >
-            {aboutText}
+            {aboutData.bio}
           </motion.p>
 
           {/* Stats Grid */}

@@ -10,14 +10,13 @@ export default function SkillsSection() {
   ];
 
   return (
-    <section className="py-32 px-6 lg:px-24 bg-black">
+    <section className="py-32 px-6 lg:px-24">
       <div className="max-w-7xl mx-auto">
-         <ParticleBackground />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.3 }}
             className="space-y-8"
           >
             <h2 className="text-4xl lg:text-7xl font-extrabold text-white leading-tight">My <span className="text-zinc-400">Toolkit</span></h2>
@@ -32,7 +31,7 @@ export default function SkillsSection() {
                 key={skill.category}
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ delay: i * 0.1 }}
                 className="space-y-4"
               >

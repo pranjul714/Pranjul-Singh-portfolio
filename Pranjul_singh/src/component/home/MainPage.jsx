@@ -8,8 +8,8 @@ import { getHomeData } from "../../services/api";
 
 export default function MainPage() {
   const [homeData, setHomeData] = React.useState({
-    title: "Hi, I'm Pranjul 👋",
-    subtitle: "Full-Stack Engineer specializing in React and Node.js/Express, building scalable applications with clean architecture."
+    hero_title: "Hi, I'm Pranjul 👋",
+    hero_subtitle: "Full-Stack Engineer specializing in React and Node.js/Express, building scalable applications with clean architecture."
   });
 
   React.useEffect(() => {
@@ -106,14 +106,14 @@ export default function MainPage() {
             variants={item}
             className="text-5xl lg:text-7xl font-extrabold text-white"
           >
-            {homeData.title}
+            {homeData.hero_title}
           </motion.h1>
 
           <motion.p
             variants={item}
             className="text-lg text-emerald-100/70 max-w-lg"
           >
-            {homeData.subtitle}
+            {homeData.hero_subtitle}
           </motion.p>
 
           <motion.div variants={item} className="flex flex-wrap gap-5 pt-4">

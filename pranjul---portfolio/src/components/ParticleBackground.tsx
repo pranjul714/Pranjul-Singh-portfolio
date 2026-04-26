@@ -16,8 +16,8 @@ const ParticleBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const PARTICLE_NUM = 420; 
-    const PARTICLE_BASE_RADIUS = 1.4;
+    const PARTICLE_NUM = 800; 
+    const PARTICLE_BASE_RADIUS = 2.0;
     const FL = 500;
     const DEFAULT_SPEED = 2.0; 
     const CONNECTION_DIST = 150; 
@@ -72,9 +72,7 @@ const ParticleBackground: React.FC = () => {
     }
 
     const loop = () => {
-      // Set to solid black to match background
-      context.fillStyle = '#000000'; 
-      context.fillRect(0, 0, canvasWidth, canvasHeight);
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
 
       speed += (targetSpeed - speed) * 0.06;
 
@@ -120,7 +118,7 @@ const ParticleBackground: React.FC = () => {
           if (distSq < CONNECTION_DIST * CONNECTION_DIST) {
             const alpha = 1 - (Math.sqrt(distSq) / CONNECTION_DIST);
             // Changed to match monochrome theme: white/zinc connections
-            context.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.15})`; 
+            context.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.3})`; 
             context.beginPath();
             context.moveTo(p1.screenX, p1.screenY);
             context.lineTo(p2.screenX, p2.screenY);
@@ -136,7 +134,7 @@ const ParticleBackground: React.FC = () => {
         
         context.beginPath();
         // Changed to white/silver for monochrome look, but keeping touch of gold if you prefer
-        context.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        context.fillStyle = 'rgba(255, 255, 255, 0.9)';
         context.arc(p.screenX, p.screenY, p.radius, 0, Math.PI * 2);
         context.fill();
       }
@@ -180,7 +178,7 @@ const ParticleBackground: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full z-0 pointer-events-none"
+      className="fixed inset-0 w-full h-full z-[50] pointer-events-none"
     />
   );
 };

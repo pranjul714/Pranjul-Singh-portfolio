@@ -5,6 +5,8 @@ import User from "../models/User.js";
 import Project from "../models/Project.js";
 import Skill from "../models/Skill.js";
 import Contact from "../models/Contact.js";
+import Home from "../models/Home.js";
+import About from "../models/About.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 // @route   GET /api/admin/contacts
@@ -24,7 +26,10 @@ router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username });
+    // Check for user by username or email
+    const user = await User.findOne({
+      $or: [{ username: username }, { email: username }],
+    });
 
     if (user && (await user.comparePassword(password))) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -102,6 +107,44 @@ router.delete("/skills/:id", protect, async (req, res) => {
     res.json({ message: "Skill removed" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// HOME SETTINGS
+router.get("/home", async (req, res) => {
+  try {
+    const home = await Home.findOne();
+    res.json(home);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post("/home", protect, async (req, res) => {
+  try {
+    const home = await Home.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    res.json(home);
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// ABOUT SETTINGS
+router.get("/about", async (req, res) => {
+  try {
+    const about = await About.findOne();
+    res.json(about);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post("/about", protect, async (req, res) => {
+  try {
+    const about = await About.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    res.json(about);
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
   }
 });
 

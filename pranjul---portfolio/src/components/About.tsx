@@ -12,10 +12,9 @@ export default function About() {
   ];
 
   return (
-    <section className="relative py-32 px-6 lg:px-24 bg-black overflow-hidden">
+    <section className="relative py-32 px-6 lg:px-24 overflow-hidden">
       
       {/* Background Decorative Glow */}
-     <ParticleBackground />
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px] -z-10 animate-pulse" />
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">

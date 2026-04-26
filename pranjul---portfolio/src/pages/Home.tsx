@@ -7,6 +7,7 @@ import About from "../components/About";
 import Contact from "../components/Contact";
 import ProjectsSection from "../components/ProjectsSection";
 import SkillsSection from "../components/SkillsSection";
+import ParticleBackground from "../components/ParticleBackground";
 
 type SectionId = "home" | "about" | "projects" | "skills" | "contact";
 
@@ -66,7 +67,7 @@ export default function Home() {
   );
 
   return (
-    <div className="relative min-h-screen font-sans bg-black text-white">
+    <div className="relative min-h-screen font-sans text-white">
       
       {/* MONOCHROME PREMIUM BACKGROUND */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -74,6 +75,8 @@ export default function Home() {
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-zinc-100/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-zinc-500/5 blur-[120px] rounded-full" />
       </div>
+
+      <ParticleBackground />
 
       {/* FIXED SOCIALS SIDEBAR */}
       <div className="fixed left-8 bottom-0 z-50 hidden lg:flex flex-col gap-5 mb-10">
@@ -85,9 +88,9 @@ export default function Home() {
 
       <Navbar scrollToSection={scrollToSection} activeSection={activeSection} />
 
-      <main className="relative z-10 px-4 lg:px-12 py-24 max-w-[1500px] mx-auto space-y-24">
+      <main className="relative z-10 px-4 lg:px-12 py-24 max-w-[1500px] mx-auto space-y-32">
         
-        <section id="home" ref={sectionRefs.home as any} className="section-style">
+        <section id="home" ref={sectionRefs.home as any} className="section-style min-h-screen flex items-center">
           <MainPage />
         </section>
 
