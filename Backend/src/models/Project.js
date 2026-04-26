@@ -11,4 +11,5 @@ const projectSchema = new mongoose.Schema({
   category: { type: String },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Project", projectSchema);
+export default mongoose.model("Project", projectSchema);
+

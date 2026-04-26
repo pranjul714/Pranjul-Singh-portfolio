@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const aboutSchema = new mongoose.Schema({
   bio: { type: String, required: true },
@@ -6,4 +6,4 @@ const aboutSchema = new mongoose.Schema({
   education: { type: String },
 }, { timestamps: true });
 
-module.exports = mongoose.model("About", aboutSchema);
+export default mongoose.model("About", aboutSchema);
