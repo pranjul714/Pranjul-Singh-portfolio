@@ -5,6 +5,8 @@ import * as Yup from "yup";
 import { Send, AlertCircle } from "lucide-react";
 import images from "../../assets/img";
 
+import { sendContactMessage } from "../../services/api";
+
 export default function Contact() {
   const validationSchema = Yup.object({
     name: Yup.string().min(2, "Name is too short").required("Name is required"),
@@ -24,28 +26,16 @@ export default function Contact() {
     validationSchema,
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       try {
-        const response = await fetch(
-          "https://pranjul-singh-portfolio-1.onrender.com/api/contact",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
+        const { data } = await sendContactMessage(values);
+        if (data.success) {
           alert("✅ Message sent successfully!");
           resetForm();
         } else {
-          alert("❌ Failed: " + data.message);
+          alert(" Failed: " + data.message);
         }
       } catch (error) {
-        console.error("Connection Error:", error);
-        alert("❌ Server is not responding.");
+        
+        
       } finally {
         setSubmitting(false);
       }

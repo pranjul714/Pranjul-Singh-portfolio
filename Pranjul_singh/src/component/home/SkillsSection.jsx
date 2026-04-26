@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { getSkills } from "../../services/api";
 import { Cpu, Code2, Database, Layout, Terminal, Globe, ShieldCheck } from "lucide-react";
 
 export default function SkillsSection() {
@@ -19,20 +20,32 @@ export default function SkillsSection() {
     }
   };
 
-  const skills = [
-    { name: "React.js", icon: <Layout size={18} /> },
-    { name: "Node.js", icon: <Terminal size={18} /> },
-    { name: "Express.js", icon: <Cpu size={18} /> },
-    { name: "MongoDB", icon: <Database size={18} /> },
-    { name: "Tailwind CSS", icon: <Globe size={18} /> },
-    { name: "REST APIs", icon: <ShieldCheck size={18} /> },
-    { name: "Redux", icon: <Code2 size={18} /> },
-    { name: "JavaScript", icon: <Code2 size={18} /> },
-    { name: "Java", icon: <Terminal size={18} /> },
-    { name: "Git & GitHub", icon: <Code2 size={18} /> },
-    { name: "Responsive Design", icon: <Layout size={18} /> },
-    { name: "Next.js", icon: <Cpu size={18} /> },
-  ];
+  const [skills, setSkills] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const iconMap = {
+    Layout: <Layout size={18} />,
+    Terminal: <Terminal size={18} />,
+    Cpu: <Cpu size={18} />,
+    Database: <Database size={18} />,
+    Globe: <Globe size={18} />,
+    ShieldCheck: <ShieldCheck size={18} />,
+    Code2: <Code2 size={18} />,
+  };
+
+  React.useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const { data } = await getSkills();
+        setSkills(data);
+      } catch (error) {
+        console.error("Failed to fetch skills:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSkills();
+  }, []);
 
   return (
     <section className="relative min-h-screen w-full px-6 lg:px-24 py-32 overflow-hidden">
@@ -63,7 +76,7 @@ export default function SkillsSection() {
           viewport={{ once: true, amount: 0.1 }}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
         >
-          {skills.map((skill, index) => (
+          {skills?.map((skill, index) => (
             <motion.div
               key={index}
               variants={item}
@@ -77,7 +90,7 @@ export default function SkillsSection() {
               rounded-2xl py-5 px-6 shadow-2xl transition-all duration-300 cursor-default"
             >
               <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors">
-                {skill.icon}
+                {skill.icon && iconMap[skill.icon] ? iconMap[skill.icon] : <Code2 size={18} />}
               </div>
               <span className="font-bold text-emerald-50/90 group-hover:text-white transition-colors tracking-wide">
                 {skill.name}

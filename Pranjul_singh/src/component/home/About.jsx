@@ -2,9 +2,23 @@ import React from "react";
 import { motion } from "framer-motion";
 import images from "../../assets/img";
 import { User, Award, CheckCircle2 } from "lucide-react";
+import { getAboutData } from "../../services/api";
 
 export default function About() {
-  // Stats defined correctly to avoid "Unexpected token" error
+  const [aboutText, setAboutText] = React.useState("I am a passionate Full-Stack Developer focused on building scalable web applications with clean architecture and elegant user experiences.");
+
+  React.useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const { data } = await getAboutData();
+        if (data && data.text) setAboutText(data.text);
+      } catch (error) {
+        console.error("Failed to fetch about data:", error);
+      }
+    };
+    fetchAbout();
+  }, []);
+
   const statsData = [
     { label: "", value: "fresher", icon: <Award size={20} /> },
     { label: "Projects Completed", value: "4+", icon: <CheckCircle2 size={20} /> },
@@ -72,9 +86,7 @@ export default function About() {
           <motion.p
             className="text-lg text-emerald-100/70 leading-relaxed max-w-xl font-medium"
           >
-            I am a passionate Full-Stack Developer focused on building
-            scalable web applications with clean architecture and elegant
-            user experiences.
+            {aboutText}
           </motion.p>
 
           {/* Stats Grid */}

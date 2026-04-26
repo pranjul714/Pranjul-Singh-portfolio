@@ -102,24 +102,6 @@ export default function Home() {
         </section>
       </main>
 
-      <style jsx>{`
-        .section-style {
-          width: 100%;
-          min-height: 90vh;
-          border-radius: 3.5rem;
-          overflow: hidden;
-          /* Clean Glass Effect */
-          background: rgba(255, 255, 255, 0.01);
-          backdrop-filter: none;
-          border: 1px solid rgba(255, 255, 255, 0.07);
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-          scroll-margin-top: 6rem;
-          transition: border-color 0.3s ease;
-        }
-        .section-style:hover {
-          border-color: rgba(16, 185, 129, 0.2);
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
+import { getProjects } from "../../services/api";
 import { ExternalLink, Github, Code2, Rocket, Globe } from "lucide-react";
 
 export default function ProjectsSection() {
@@ -21,42 +21,18 @@ export default function ProjectsSection() {
     }
   };
 
-  const [projects, setProjects] = React.useState([
-    {
-      title: "Portfolio 2026",
-      desc: "A premium 3D portfolio built with React, Framer Motion, and Canvas particles.",
-      tech: ["React", "Tailwind", "Canvas"],
-      github: "https://github.com/pranjul714",
-      live: "https://pranjul-singh-portfolio.vercel.app",
-      icon: <Rocket size={24} />
-    },
-    {
-      title: "E-Commerce App",
-      desc: "Full-stack shopping platform with secure payments and admin dashboard.",
-      tech: ["Node.js", "MongoDB", "Redux"],
-      github: "https://github.com/pranjul714",
-      live: "#",
-      icon: <Globe size={24} />
-    },
-    {
-      title: "Task Manager",
-      desc: "Efficient project management tool with real-time updates and team collaboration.",
-      tech: ["Express", "Socket.io", "React"],
-      github: "https://github.com/pranjul714",
-      live: "#",
-      icon: <Code2 size={24} />
-    }
-  ]);
+  const [projects, setProjects] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/admin/projects");
-        if (data && data.length > 0) {
-          setProjects(data);
-        }
+        const { data } = await getProjects();
+        setProjects(data);
       } catch (error) {
-        console.error("Failed to fetch projects, using fallback data.");
+        console.error("Failed to fetch projects:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProjects();
@@ -140,7 +116,7 @@ export default function ProjectsSection() {
 
               {/* Tech Stack Tags */}
               <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5">
-                {project.tech.map((tech, i) => (
+                {project.tech?.map((tech, i) => (
                   <span
                     key={i}
                     className="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 
