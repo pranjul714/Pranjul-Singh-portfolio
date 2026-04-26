@@ -53,7 +53,7 @@ export default function Contact() {
   });
 
   return (
-    <section className="relative py-32 px-6 lg:px-24 bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021f1a] overflow-hidden min-h-screen flex flex-col items-center justify-center">
+    <section className="relative py-32 px-6 lg:px-24 overflow-hidden min-h-screen flex flex-col items-center justify-center">
       
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] -z-10 animate-pulse" />
 
@@ -91,7 +91,7 @@ export default function Contact() {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="relative z-10 bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-8 lg:p-12 rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)]"
+          className="relative z-10 bg-white/[0.03] backdrop-blur-md border border-white/10 p-8 lg:p-12 rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)]"
         >
           <form onSubmit={formik.handleSubmit} className="space-y-6">
 

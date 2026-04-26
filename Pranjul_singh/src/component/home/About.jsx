@@ -12,7 +12,7 @@ export default function About() {
   ];
 
   return (
-    <section className="relative py-32 px-6 lg:px-24 bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021f1a] overflow-hidden">
+    <section className="relative py-32 px-6 lg:px-24 overflow-hidden">
       
       {/* Background Decorative Glow */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] -z-10 animate-pulse" />
@@ -41,7 +41,7 @@ export default function About() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative z-10 h-full w-full bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] flex items-center justify-center p-8 overflow-hidden"
+              className="relative z-10 h-full w-full bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] flex items-center justify-center p-8 overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 to-transparent pointer-events-none" />
               <motion.img
@@ -83,7 +83,7 @@ export default function About() {
               <motion.div
                 key={index}
                 whileHover={{ y: -5, borderColor: "rgba(52,211,153,0.4)" }}
-                className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex flex-col items-center text-center transition-all"
+                className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center text-center transition-all"
               >
                 <div className="p-3 bg-emerald-400/10 text-emerald-400 rounded-2xl mb-3">
                   {stat.icon}

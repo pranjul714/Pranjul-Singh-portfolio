@@ -35,8 +35,7 @@ export default function SkillsSection() {
   ];
 
   return (
-    <section className="relative min-h-screen w-full px-6 lg:px-24 py-32 overflow-hidden
-      bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021f1a]">
+    <section className="relative min-h-screen w-full px-6 lg:px-24 py-32 overflow-hidden">
 
       {/* Background Decorative Glows */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
@@ -74,7 +73,7 @@ export default function SkillsSection() {
                 borderColor: "rgba(52,211,153,0.5)",
                 backgroundColor: "rgba(255,255,255,0.06)"
               }}
-              className="group flex items-center gap-4 bg-white/[0.03] backdrop-blur-2xl border border-white/10
+              className="group flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10
               rounded-2xl py-5 px-6 shadow-2xl transition-all duration-300 cursor-default"
             >
               <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors">

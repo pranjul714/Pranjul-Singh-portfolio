@@ -7,6 +7,7 @@ import About from "./About.jsx";
 import Contact from "./Contact.jsx";
 import ProjectsSection from "./ProjectsSection.jsx";
 import SkillsSection from "./SkillsSection.jsx";
+import ParticleBackground from "../ParticleBackground.jsx";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
@@ -65,14 +66,8 @@ export default function Home() {
   );
 
   return (
-    <div className="relative min-h-screen font-sans bg-[#022c22] text-white">
-      
-      {/* 2026 PREMIUM BACKGROUND: Deep Emerald Gradient with Noise/Glow */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021f1a]" />
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-green-500/10 blur-[120px] rounded-full" />
-      </div>
+    <div className="relative min-h-screen font-sans bg-black text-white">
+      <ParticleBackground />
 
       {/* FIXED SOCIALS SIDEBAR */}
       <div className="fixed left-8 bottom-0 z-50 hidden lg:flex flex-col gap-5 mb-10">
@@ -113,9 +108,9 @@ export default function Home() {
           min-height: 90vh;
           border-radius: 3.5rem;
           overflow: hidden;
-          /* Dark Glass Effect */
-          background: rgba(255, 255, 255, 0.02);
-          backdrop-filter: blur(30px);
+          /* Clean Glass Effect */
+          background: rgba(255, 255, 255, 0.01);
+          backdrop-filter: none;
           border: 1px solid rgba(255, 255, 255, 0.07);
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
           scroll-margin-top: 6rem;

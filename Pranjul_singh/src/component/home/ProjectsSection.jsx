@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
 import { ExternalLink, Github, Code2, Rocket, Globe } from "lucide-react";
 
 export default function ProjectsSection() {
@@ -20,36 +21,61 @@ export default function ProjectsSection() {
     }
   };
 
-  const projects = [
+  const [projects, setProjects] = React.useState([
     {
-      title: "Music Player",
-      desc: "Basic",
-      tech: ["Html", "Css", "JavaScript"],
-      icon: <Rocket className="text-emerald-400" size={24} />,
-      github: "https://github.com/pranjul714/Music-Player",
-      live: "#"
+      title: "Portfolio 2026",
+      desc: "A premium 3D portfolio built with React, Framer Motion, and Canvas particles.",
+      tech: ["React", "Tailwind", "Canvas"],
+      github: "https://github.com/pranjul714",
+      live: "https://pranjul-singh-portfolio.vercel.app",
+      icon: <Rocket size={24} />
     },
     {
-      title: "Diagnostic Tests Booking app",
-      desc: "",
-      tech: ["React", "Express", "Node"],
-      icon: <Code2 className="text-blue-400" size={24} />,
-      github: "https://github.com/pranjul714/Diagnostic-Lab-Tests-Booking-app",
-      live: "#"
+      title: "E-Commerce App",
+      desc: "Full-stack shopping platform with secure payments and admin dashboard.",
+      tech: ["Node.js", "MongoDB", "Redux"],
+      github: "https://github.com/pranjul714",
+      live: "#",
+      icon: <Globe size={24} />
     },
     {
-      title: "Road Trip Planner",
-      desc: "",
-      tech: ["React", "Tailwind", "Node"],
-      icon: <Globe className="text-purple-400" size={24} />,
-      github: "https://github.com/pranjul714/ROADTRIP",
-      live: "https://road-trip-planner-alpha.vercel.app/register"
+      title: "Task Manager",
+      desc: "Efficient project management tool with real-time updates and team collaboration.",
+      tech: ["Express", "Socket.io", "React"],
+      github: "https://github.com/pranjul714",
+      live: "#",
+      icon: <Code2 size={24} />
     }
-  ];
+  ]);
+
+  React.useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/api/admin/projects");
+        if (data && data.length > 0) {
+          setProjects(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects, using fallback data.");
+      }
+    };
+    fetchProjects();
+  }, []);
+
+
+  const IconRenderer = ({ iconName }) => {
+    const icons = {
+      Rocket: <Rocket size={24} />,
+      Globe: <Globe size={24} />,
+      Code2: <Code2 size={24} />,
+      ExternalLink: <ExternalLink size={24} />,
+      Github: <Github size={24} />
+    };
+    return icons[iconName] || <Code2 size={24} />;
+  };
 
   return (
-    <section className="relative min-h-screen w-full px-6 lg:px-24 py-32 overflow-hidden
-      bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021f1a]">
+    <section className="relative min-h-screen w-full px-6 lg:px-24 py-32 overflow-hidden">
 
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
@@ -85,14 +111,14 @@ export default function ProjectsSection() {
               key={index}
               variants={item}
               whileHover={{ y: -12 }}
-              className="group relative bg-white/[0.03] backdrop-blur-2xl border border-white/10 
+              className="group relative bg-white/[0.03] backdrop-blur-md border border-white/10 
                          rounded-[2.5rem] p-8 transition-all duration-500 hover:border-emerald-500/30 
                          hover:bg-white/[0.05] shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
             >
               {/* Card Header: Icon & Links */}
               <div className="flex justify-between items-start mb-8">
                 <div className="p-4 bg-white/[0.05] rounded-2xl group-hover:bg-emerald-500/10 transition-colors">
-                  {project.icon}
+                  {typeof project.icon === 'string' ? <IconRenderer iconName={project.icon} /> : project.icon}
                 </div>
                 <div className="flex gap-3">
                   <a href={project.github} className="p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">

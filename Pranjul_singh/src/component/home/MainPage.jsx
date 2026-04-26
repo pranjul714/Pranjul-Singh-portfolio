@@ -62,7 +62,7 @@ export default function MainPage() {
   return (
     <section
       id="home"
-      className="relative min-h-screen w-full flex items-center justify-center px-6 lg:px-24 py-20 overflow-hidden bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#021f1a]"
+      className="relative min-h-screen w-full flex items-center justify-center px-6 lg:px-24 py-20 overflow-hidden"
     >
       {/* Background Glow */}
       <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl -z-10" />
@@ -130,7 +130,7 @@ export default function MainPage() {
         
         </motion.div>
 
-        {/* RIGHT IMAGE */}
+     
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -159,7 +159,7 @@ export default function MainPage() {
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ rotateX, rotateY }}
-              className="relative z-10 w-full h-full backdrop-blur-md border border-emerald-500/20 rounded-[40px] shadow-2xl overflow-hidden p-6"
+              className="relative z-10 w-full h-full backdrop-blur-md border border-emerald-500/20 rounded-[40px] shadow-2xl overflow-hidden p-6 bg-white/5"
             >
               <img
                 src={images?.Pranjulimg}
@@ -179,6 +179,7 @@ export default function MainPage() {
 
           </div>
         </motion.div>
+        
       </div>
     </section>
   );
