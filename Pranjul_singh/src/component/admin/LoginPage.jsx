@@ -11,7 +11,8 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://localhost:5000/api/admin/login", { username, password });
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const { data } = await axios.post(`${API_URL}/admin/login`, { username, password });
       if (data.success) {
         localStorage.setItem("adminToken", data.token);
         toast.success("Logged in successfully!");
