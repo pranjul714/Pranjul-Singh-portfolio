@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { getSkills } from "../../services/api";
 import { Cpu, Code2, Database, Layout, Terminal, Globe, ShieldCheck } from "lucide-react";
+import { io } from "socket.io-client";
 
 export default function SkillsSection() {
   const container = {
@@ -45,6 +46,15 @@ export default function SkillsSection() {
       }
     };
     fetchSkills();
+
+    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api$/, "");
+    const socket = io(socketUrl);
+    
+    socket.on("data_updated", (data) => {
+      if (data.type === "skills") fetchSkills();
+    });
+
+    return () => socket.disconnect();
   }, []);
 
   return (

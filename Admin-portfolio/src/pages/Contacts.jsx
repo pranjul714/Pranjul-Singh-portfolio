@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getContacts } from '../services/api';
 import { Mail, Calendar, User, MessageSquare, Search } from 'lucide-react';
+import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
 import './Contacts.css';
 
@@ -21,6 +22,15 @@ const Contacts = () => {
       }
     };
     fetchContacts();
+
+    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/admin$/, "");
+    const socket = io(socketUrl);
+    
+    socket.on("data_updated", (data) => {
+      if (data.type === "contacts") fetchContacts();
+    });
+
+    return () => socket.disconnect();
   }, []);
 
   const filteredContacts = contacts.filter(contact => 

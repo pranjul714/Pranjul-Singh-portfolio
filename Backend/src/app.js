@@ -76,6 +76,7 @@ app.post("/api/contact", async (req, res) => {
       await transporter.sendMail(mailOptions);
     }
 
+    req.app.get("io").emit("data_updated", { type: "contacts" });
     return res.status(200).json({
       success: true,
       message: "Message sent successfully!",

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSkills, createSkill, deleteSkill } from '../services/api';
 import { Plus, Trash2, Trophy } from 'lucide-react';
+import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
 import './Skills.css';
 
@@ -22,6 +23,15 @@ const Skills = () => {
 
   useEffect(() => {
     fetchSkills();
+
+    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/admin$/, "");
+    const socket = io(socketUrl);
+    
+    socket.on("data_updated", (data) => {
+      if (data.type === "skills") fetchSkills();
+    });
+
+    return () => socket.disconnect();
   }, []);
 
   const handleDelete = async (id) => {

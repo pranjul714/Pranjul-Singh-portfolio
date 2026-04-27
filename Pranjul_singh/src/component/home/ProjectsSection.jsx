@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { getProjects } from "../../services/api";
 import { ExternalLink, Github, Code2, Rocket, Globe } from "lucide-react";
+import { io } from "socket.io-client";
 
 export default function ProjectsSection() {
   const container = {
@@ -30,12 +31,21 @@ export default function ProjectsSection() {
         const { data } = await getProjects();
         setProjects(data);
       } catch (error) {
-        console.error("Failed to fetch projects:", error);
+        console.error("❌ Failed to fetch projects:", error);
       } finally {
         setLoading(false);
       }
     };
     fetchProjects();
+
+    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api$/, "");
+    const socket = io(socketUrl);
+    
+    socket.on("data_updated", (data) => {
+      if (data.type === "projects") fetchProjects();
+    });
+
+    return () => socket.disconnect();
   }, []);
 
 

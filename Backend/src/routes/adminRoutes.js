@@ -58,6 +58,7 @@ router.get("/projects", async (req, res) => {
 router.post("/projects", protect, async (req, res) => {
   try {
     const project = await Project.create(req.body);
+    req.app.get("io").emit("data_updated", { type: "projects" });
     res.status(201).json(project);
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -67,6 +68,7 @@ router.post("/projects", protect, async (req, res) => {
 router.put("/projects/:id", protect, async (req, res) => {
   try {
     const project = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    req.app.get("io").emit("data_updated", { type: "projects" });
     res.json(project);
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -76,6 +78,7 @@ router.put("/projects/:id", protect, async (req, res) => {
 router.delete("/projects/:id", protect, async (req, res) => {
   try {
     await Project.findByIdAndDelete(req.params.id);
+    req.app.get("io").emit("data_updated", { type: "projects" });
     res.json({ message: "Project removed" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -95,6 +98,7 @@ router.get("/skills", async (req, res) => {
 router.post("/skills", protect, async (req, res) => {
   try {
     const skill = await Skill.create(req.body);
+    req.app.get("io").emit("data_updated", { type: "skills" });
     res.status(201).json(skill);
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -104,6 +108,7 @@ router.post("/skills", protect, async (req, res) => {
 router.delete("/skills/:id", protect, async (req, res) => {
   try {
     await Skill.findByIdAndDelete(req.params.id);
+    req.app.get("io").emit("data_updated", { type: "skills" });
     res.json({ message: "Skill removed" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
