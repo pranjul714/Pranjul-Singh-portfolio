@@ -1,9 +1,12 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/admin';
+const getBaseURL = () => {
+  const url = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/admin';
+  return url.endsWith('/api/admin') ? url : `${url.replace(/\/$/, '')}/api/admin`;
+};
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: getBaseURL(),
 });
 
 api.interceptors.request.use(

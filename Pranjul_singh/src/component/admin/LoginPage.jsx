@@ -11,7 +11,8 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const API_URL = rawUrl.replace(/\/$/, "");
       const { data } = await axios.post(`${API_URL}/admin/login`, { username, password });
       if (data.success) {
         localStorage.setItem("adminToken", data.token);

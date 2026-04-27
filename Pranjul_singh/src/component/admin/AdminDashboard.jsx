@@ -20,7 +20,8 @@ export default function AdminDashboard() {
   const [newSkill, setNewSkill] = useState({ name: "", category: "Frontend", proficiency: 80 });
 
   const token = localStorage.getItem("adminToken");
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const API_URL = rawUrl.replace(/\/$/, "");
 
   useEffect(() => {
     fetchData();
