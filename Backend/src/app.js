@@ -16,11 +16,11 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",
-  "http://localhost:3001",
+  "https://portfolio-admin-phi-umber.vercel.app/",
   "https://pranjul-singh-portfolio.vercel.app",
   "https://pranjul-singh-portfolio-6d3h3r8k4-pranjuls-projects-d46e56f6.vercel.app/"
 ];
-    
+
 app.use(
   cors({
     origin: function (origin, callback) {
