@@ -40,14 +40,14 @@ export default function SkillsSection() {
         const { data } = await getSkills();
         setSkills(data);
       } catch (error) {
-        console.error("Failed to fetch skills:", error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }
     };
     fetchSkills();
 
-    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api$/, "");
+    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
     const socket = io(socketUrl);
     
     socket.on("data_updated", (data) => {
@@ -83,30 +83,44 @@ export default function SkillsSection() {
           variants={container}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+          viewport={{ once: true, amount: 0.05 }}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 relative z-20"
         >
-          {skills?.map((skill, index) => (
-            <motion.div
-              key={index}
-              variants={item}
-              whileHover={{ 
-                y: -8, 
-                scale: 1.02,
-                borderColor: "rgba(52,211,153,0.5)",
-                backgroundColor: "rgba(255,255,255,0.06)"
-              }}
-              className="group flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10
-              rounded-2xl py-5 px-6 shadow-2xl transition-all duration-300 cursor-default"
-            >
-              <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors">
-                {skill.icon && iconMap[skill.icon] ? iconMap[skill.icon] : <Code2 size={18} />}
+          {loading ? (
+            // Skeleton Loaders
+            Array(8).fill(0).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-2xl py-5 px-6 animate-pulse">
+                <div className="w-10 h-10 bg-white/5 rounded-xl"></div>
+                <div className="h-4 w-20 bg-white/5 rounded"></div>
               </div>
-              <span className="font-bold text-emerald-50/90 group-hover:text-white transition-colors tracking-wide">
-                {skill.name}
-              </span>
-            </motion.div>
-          ))}
+            ))
+          ) : skills.length > 0 ? (
+            skills?.map((skill, index) => (
+              <motion.div
+                key={index}
+                variants={item}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.02,
+                  borderColor: "rgba(52,211,153,0.5)",
+                  backgroundColor: "rgba(255,255,255,0.06)"
+                }}
+                className="group flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10
+                rounded-2xl py-5 px-6 shadow-2xl transition-all duration-300 cursor-default"
+              >
+                <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors">
+                  {skill.icon && iconMap[skill.icon] ? iconMap[skill.icon] : <Code2 size={18} />}
+                </div>
+                <span className="font-bold text-emerald-50/90 group-hover:text-white transition-colors tracking-wide">
+                  {skill.name}
+                </span>
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-full py-10 text-center bg-white/[0.02] border border-dashed border-white/10 rounded-2xl">
+               <p className="text-emerald-100/40 font-medium">No skills added yet.</p>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

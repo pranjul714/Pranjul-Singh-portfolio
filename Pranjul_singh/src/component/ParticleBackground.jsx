@@ -69,29 +69,15 @@ const ParticleBackground = () => {
 
       speed += (targetSpeed - speed) * 0.06;
 
-      // Smoothly follow mouse
-      if (mouseX !== null && mouseY !== null) {
-        currentCenterX += (centerX + (mouseX - centerX) * 0.2 - currentCenterX) * 0.08;
-        currentCenterY += (centerY + (mouseY - centerY) * 0.2 - currentCenterY) * 0.08;
-      } else {
-        currentCenterX += (centerX - currentCenterX) * 0.08;
-        currentCenterY += (centerY - currentCenterY) * 0.08;
-      }
+      // Always stay centered
+      currentCenterX = centerX;
+      currentCenterY = centerY;
 
       for (let i = 0; i < PARTICLE_NUM; i++) {
         const p = particles[i];
         p.pastZ = p.z;
         p.z -= speed;
 
-        if (mouseX !== null && mouseY !== null) {
-          const dx = p.x - mouseX;
-          const dy = p.y - mouseY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 200) {
-            p.x += dx * 0.01;
-            p.y += dy * 0.01;
-          }
-        }
 
         p.x += p.vx;
         p.y += p.vy;
@@ -156,17 +142,11 @@ const ParticleBackground = () => {
       }
 
       window.addEventListener('resize', resize);
-      const handleMouseMove = (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      };
-      window.addEventListener('mousemove', handleMouseMove);
 
       animate();
       
       return () => {
         window.removeEventListener('resize', resize);
-        window.removeEventListener('mousemove', handleMouseMove);
         cancelAnimationFrame(animationFrameId);
       };
     };

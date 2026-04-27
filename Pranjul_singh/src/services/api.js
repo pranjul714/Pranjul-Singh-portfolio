@@ -1,12 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001/api').replace(/\/$/, '');
 
 // Ensure the URL ends with /api
 const finalBaseURL = API_BASE_URL.endsWith('/api') ? API_BASE_URL : `${API_BASE_URL}/api`;
 
 const api = axios.create({
   baseURL: finalBaseURL,
+  timeout: 10000, // 10 seconds timeout
 });
 
 export const getProjects = () => api.get('/admin/projects');

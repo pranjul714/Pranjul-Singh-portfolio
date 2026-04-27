@@ -20,8 +20,8 @@ connectDB();
 
 // Socket Connection
 io.on("connection", (socket) => {
-  console.log("🔌 New client connected:", socket.id);
-  socket.on("disconnect", () => console.log("👋 Client disconnected"));
+  // Silent connection
+  socket.on("disconnect", () => {});
 });
 
 // Make io accessible in routes

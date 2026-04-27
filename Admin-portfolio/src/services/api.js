@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-  const url = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/admin';
+  const url = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/admin';
   return url.endsWith('/api/admin') ? url : `${url.replace(/\/$/, '')}/api/admin`;
 };
 

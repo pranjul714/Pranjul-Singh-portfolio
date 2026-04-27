@@ -27,7 +27,7 @@ const Dashboard = () => {
           visitors: 1250
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        // Silently handle
       } finally {
         setLoading(false);
       }
