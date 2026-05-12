@@ -2,30 +2,39 @@ import { Visitor } from "../models/visitor.model.js";
 
 export const trackVisitor = async (req, res, next) => {
   try {
-    // Only track page visits (usually the main frontend requests or specific API pings)
-    // We avoid tracking every single static file or preflight request
     if (req.method !== "GET") return next();
     
-    // Skip common internal/static requests if needed
     if (req.url.includes('.') || req.url.startsWith('/admin')) return next();
 
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
+    // Extract IP address correctly, handling proxies and comma-separated lists
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
+    if (ip.includes(',')) {
+      ip = ip.split(',')[0].trim();
+    }
+    // Remove IPv6 prefix if present
+    if (ip.startsWith('::ffff:')) {
+      ip = ip.replace('::ffff:', '');
+    }
+
     const userAgent = req.headers['user-agent'] || "Unknown";
     const referrer = req.headers['referer'] || "Direct";
 
-    // Approximate Location fetch using ip-api.com (Native Fetch)
-    // Note: Localhost (::1 or 127.0.0.1) will return "Reserved Range"
+    // Skip geo-lookup for localhost
     let geoData = {};
-    try {
-      const response = await fetch(`http://ip-api.com/json/${ip}`);
-      if (response.ok) {
-        geoData = await response.json();
+    if (ip !== "::1" && ip !== "127.0.0.1" && ip !== "localhost" && ip !== "") {
+      try {
+        const response = await fetch(`http://ip-api.com/json/${ip}`);
+        if (response.ok) {
+          geoData = await response.json();
+        }
+      } catch (err) {
+        console.error("Geo lookup failed for IP:", ip, err.message);
       }
-    } catch (err) {
-      console.error("Geo lookup failed:", err.message);
+    } else {
+      geoData = { city: "Localhost", regionName: "Internal", country: "Local" };
     }
 
-    // Create visitor entry asynchronously so it doesn't block the response
+    // Create visitor entry asynchronously
     Visitor.create({
       ip: ip,
       city: geoData.city || "Unknown",
@@ -37,7 +46,6 @@ export const trackVisitor = async (req, res, next) => {
 
     next();
   } catch (error) {
-    // Silent error to ensure website still loads
     next();
   }
 };
