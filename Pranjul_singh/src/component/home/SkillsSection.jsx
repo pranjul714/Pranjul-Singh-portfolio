@@ -1,24 +1,11 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { getSkills } from "../../services/api";
 import { Cpu, Code2, Database, Layout, Terminal, Globe, ShieldCheck } from "lucide-react";
+import { useTextReveal, useStaggerCards } from "../../hooks/useScrollAnimation";
 
 export default function SkillsSection() {
-  const container = {
-    hidden: {},
-    show: {
-      transition: { staggerChildren: 0.08 }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, scale: 0.9 },
-    show: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
-  };
+  const headerRef = useTextReveal();
+  const gridRef = useStaggerCards(".gsap-card");
 
   const [skills, setSkills] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -54,10 +41,8 @@ export default function SkillsSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
 
       <div className="max-w-6xl mx-auto text-center relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+        <div
+          ref={headerRef}
           className="mb-20 space-y-4"
         >
           <h2 className="text-5xl lg:text-6xl font-black text-white tracking-tight">
@@ -67,13 +52,10 @@ export default function SkillsSection() {
           <p className="text-emerald-100/60 text-lg pt-4 font-medium">
             The modern stack I use to bring digital ideas to life.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.05 }}
+        <div
+          ref={gridRef}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 relative z-20"
         >
           {loading ? (
@@ -86,17 +68,10 @@ export default function SkillsSection() {
             ))
           ) : skills.length > 0 ? (
             skills?.map((skill, index) => (
-              <motion.div
+              <div
                 key={index}
-                variants={item}
-                whileHover={{ 
-                  y: -8, 
-                  scale: 1.02,
-                  borderColor: "rgba(52,211,153,0.5)",
-                  backgroundColor: "rgba(255,255,255,0.06)"
-                }}
-                className="group flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10
-                rounded-2xl py-5 px-6 shadow-2xl transition-all duration-300 cursor-default"
+                className="gsap-card group flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10
+                rounded-2xl py-5 px-6 shadow-2xl transition-all duration-300 cursor-default hover:-translate-y-2 hover:scale-105 hover:border-emerald-500/50 hover:bg-white/[0.06]"
               >
                 <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors">
                   {skill.icon && iconMap[skill.icon] ? iconMap[skill.icon] : <Code2 size={18} />}
@@ -104,14 +79,14 @@ export default function SkillsSection() {
                 <span className="font-bold text-emerald-50/90 group-hover:text-white transition-colors tracking-wide">
                   {skill.name}
                 </span>
-              </motion.div>
+              </div>
             ))
           ) : (
             <div className="col-span-full py-10 text-center bg-white/[0.02] border border-dashed border-white/10 rounded-2xl">
                <p className="text-emerald-100/40 font-medium">No skills added yet.</p>
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

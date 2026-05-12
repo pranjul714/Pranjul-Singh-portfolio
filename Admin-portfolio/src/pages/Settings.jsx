@@ -28,11 +28,25 @@ const Settings = () => {
     fetchData();
   }, []);
 
+  const [files, setFiles] = useState({ profile_image: null, resume: null });
+
   const handleHomeSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateHome(homeData);
-      toast.success('Hero settings updated');
+      const formData = new FormData();
+      formData.append('hero_title', homeData.hero_title);
+      formData.append('hero_subtitle', homeData.hero_subtitle);
+      
+      if (files.profile_image) formData.append('profile_image', files.profile_image);
+      if (files.resume) formData.append('resume', files.resume);
+
+      await updateHome(formData);
+      toast.success('Hero settings updated successfully');
+      
+      // Refresh to show updated URLs
+      const { data } = await getHome();
+      if (data) setHomeData(data);
+      setFiles({ profile_image: null, resume: null });
     } catch (error) {
       toast.error('Failed to update hero settings');
     }
@@ -73,12 +87,14 @@ const Settings = () => {
               <textarea rows="2" value={homeData.hero_subtitle} onChange={e => setHomeData({...homeData, hero_subtitle: e.target.value})}></textarea>
             </div>
             <div className="form-group">
-              <label>Resume URL</label>
-              <input type="text" value={homeData.resume_url} onChange={e => setHomeData({...homeData, resume_url: e.target.value})} />
+              <label>Resume (PDF)</label>
+              <input type="file" accept=".pdf" onChange={e => setFiles({...files, resume: e.target.files[0]})} />
+              {homeData.resume_url && <small><a href={homeData.resume_url} target="_blank" rel="noreferrer" style={{color: '#34d399'}}>View Current Resume</a></small>}
             </div>
             <div className="form-group">
-              <label>Profile Image URL</label>
-              <input type="text" value={homeData.profile_image} onChange={e => setHomeData({...homeData, profile_image: e.target.value})} />
+              <label>Profile Image (JPG/PNG)</label>
+              <input type="file" accept="image/*" onChange={e => setFiles({...files, profile_image: e.target.files[0]})} />
+              {homeData.profile_image && <small><a href={homeData.profile_image} target="_blank" rel="noreferrer" style={{color: '#34d399'}}>View Current Profile Image</a></small>}
             </div>
             <button type="submit" className="save-btn">
               <Save size={18} />

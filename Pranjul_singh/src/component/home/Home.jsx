@@ -1,13 +1,15 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import Navbar from "../Navbar/Navbar.jsx";
-import MainPage from "./MainPage.jsx";
-import About from "./About.jsx";
-import Contact from "./Contact.jsx";
-import ProjectsSection from "./ProjectsSection.jsx";
-import SkillsSection from "./SkillsSection.jsx";
 import ParticleBackground from "../ParticleBackground.jsx";
+
+// Lazy Load Sections for Performance
+const MainPage = lazy(() => import("./MainPage.jsx"));
+const About = lazy(() => import("./About.jsx"));
+const ProjectsSection = lazy(() => import("./ProjectsSection.jsx"));
+const SkillsSection = lazy(() => import("./SkillsSection.jsx"));
+const Contact = lazy(() => import("./Contact.jsx"));
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
@@ -80,26 +82,27 @@ export default function Home() {
       <Navbar scrollToSection={scrollToSection} activeSection={activeSection} />
 
       <main className="relative z-10 px-4 lg:px-12 py-24 max-w-[1500px] mx-auto space-y-24">
-        
-        <section id="home" ref={sectionRefs.home} className="section-style">
-          <MainPage />
-        </section>
+        <Suspense fallback={<div className="h-screen flex items-center justify-center text-emerald-400">Loading...</div>}>
+          <section id="home" ref={sectionRefs.home} className="section-style">
+            <MainPage />
+          </section>
 
-        <section id="about" ref={sectionRefs.about} className="section-style">
-          <About />
-        </section>
+          <section id="about" ref={sectionRefs.about} className="section-style">
+            <About />
+          </section>
 
-        <section id="projects" ref={sectionRefs.projects} className="section-style">
-          <ProjectsSection />
-        </section>
+          <section id="projects" ref={sectionRefs.projects} className="section-style">
+            <ProjectsSection />
+          </section>
 
-        <section id="skills" ref={sectionRefs.skills} className="section-style">
-          <SkillsSection />
-        </section>
+          <section id="skills" ref={sectionRefs.skills} className="section-style">
+            <SkillsSection />
+          </section>
 
-        <section id="contact" ref={sectionRefs.contact} className="section-style">
-          <Contact />
-        </section>
+          <section id="contact" ref={sectionRefs.contact} className="section-style">
+            <Contact />
+          </section>
+        </Suspense>
       </main>
 
     </div>

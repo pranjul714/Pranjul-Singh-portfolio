@@ -8,6 +8,9 @@ import Contact from "../models/Contact.js";
 import Home from "../models/Home.js";
 import About from "../models/About.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/multerMiddleware.js";
+import { uploadOnCloudinary } from "../config/cloudinary.js";
+
 
 // @route   GET /api/admin/contacts
 // @desc    Get all contact messages
@@ -55,9 +58,22 @@ router.get("/projects", async (req, res) => {
   }
 });
 
-router.post("/projects", protect, async (req, res) => {
+router.post("/projects", protect, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'icon', maxCount: 1 }]), async (req, res) => {
   try {
-    const project = await Project.create(req.body);
+    const data = { ...req.body };
+    
+    if (req.files) {
+      if (req.files.image) {
+        const result = await uploadOnCloudinary(req.files.image[0].path);
+        if (result) data.image = result.secure_url;
+      }
+      if (req.files.icon) {
+        const result = await uploadOnCloudinary(req.files.icon[0].path);
+        if (result) data.icon = result.secure_url;
+      }
+    }
+
+    const project = await Project.create(data);
     req.app.get("io").emit("data_updated", { type: "projects" });
     res.status(201).json(project);
   } catch (error) {
@@ -65,15 +81,30 @@ router.post("/projects", protect, async (req, res) => {
   }
 });
 
-router.put("/projects/:id", protect, async (req, res) => {
+
+router.put("/projects/:id", protect, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'icon', maxCount: 1 }]), async (req, res) => {
   try {
-    const project = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const data = { ...req.body };
+
+    if (req.files) {
+      if (req.files.image) {
+        const result = await uploadOnCloudinary(req.files.image[0].path);
+        if (result) data.image = result.secure_url;
+      }
+      if (req.files.icon) {
+        const result = await uploadOnCloudinary(req.files.icon[0].path);
+        if (result) data.icon = result.secure_url;
+      }
+    }
+
+    const project = await Project.findByIdAndUpdate(req.params.id, data, { new: true });
     req.app.get("io").emit("data_updated", { type: "projects" });
     res.json(project);
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
 
 router.delete("/projects/:id", protect, async (req, res) => {
   try {
@@ -125,14 +156,28 @@ router.get("/home", async (req, res) => {
   }
 });
 
-router.post("/home", protect, async (req, res) => {
+router.post("/home", protect, upload.fields([{ name: 'profile_image', maxCount: 1 }, { name: 'resume', maxCount: 1 }]), async (req, res) => {
   try {
-    const home = await Home.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    const data = { ...req.body };
+
+    if (req.files) {
+      if (req.files.profile_image) {
+        const result = await uploadOnCloudinary(req.files.profile_image[0].path);
+        if (result) data.profile_image = result.secure_url;
+      }
+      if (req.files.resume) {
+        const result = await uploadOnCloudinary(req.files.resume[0].path);
+        if (result) data.resume_url = result.secure_url;
+      }
+    }
+
+    const home = await Home.findOneAndUpdate({}, data, { upsert: true, new: true });
     res.json(home);
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
 
 // ABOUT SETTINGS
 router.get("/about", async (req, res) => {

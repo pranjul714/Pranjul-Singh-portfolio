@@ -3,8 +3,11 @@ import { motion } from "framer-motion";
 import images from "../../assets/img";
 import { User, Award, CheckCircle2 } from "lucide-react";
 import { getAboutData } from "../../services/api";
+import { useScrollReveal } from "../../hooks/useScrollAnimation";
 
 export default function About() {
+  const containerRef = useScrollReveal();
+
   const [aboutData, setAboutData] = React.useState({
     bio: "I am a passionate Full-Stack Developer focused on building scalable web applications with clean architecture and elegant user experiences.",
     experience_years: "fresher",
@@ -30,7 +33,7 @@ export default function About() {
   ];
 
   return (
-    <section className="relative py-32 px-6 lg:px-24 overflow-hidden">
+    <section ref={containerRef} className="relative py-32 px-6 lg:px-24 overflow-hidden">
       
       {/* Background Decorative Glow */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] -z-10 animate-pulse" />
@@ -87,17 +90,19 @@ export default function About() {
             <div className="w-20 h-1.5 bg-emerald-500 rounded-full" />
           </motion.div>
 
-          <motion.p
+          <p
+            data-gsap
             className="text-lg text-emerald-100/70 leading-relaxed max-w-xl font-medium"
           >
             {aboutData.bio}
-          </motion.p>
+          </p>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4">
             {statsData.map((stat, index) => (
               <motion.div
                 key={index}
+                data-gsap
                 whileHover={{ y: -5, borderColor: "rgba(52,211,153,0.4)" }}
                 className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center text-center transition-all"
               >
@@ -111,6 +116,7 @@ export default function About() {
           </div>
 
           <motion.button
+            data-gsap
             whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(16,185,129,0.3)" }}
             whileTap={{ scale: 0.95 }}
             onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}

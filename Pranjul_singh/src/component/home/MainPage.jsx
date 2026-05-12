@@ -124,8 +124,8 @@ export default function MainPage() {
             >
               
                  <a
-              href={myCV}
-              download
+              href={homeData?.resume_url || myCV}
+              download="Pranjul_Singh_CV.pdf"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-3 text-emerald-950 font-semibold w-fit"
@@ -174,8 +174,8 @@ export default function MainPage() {
               className="relative z-10 w-full h-full backdrop-blur-md border border-emerald-500/20 rounded-[40px] shadow-2xl overflow-hidden p-6 bg-white/5"
             >
               <img
-                src={images?.Pranjulimg}
-                alt="Pranjul"
+                src={homeData?.profile_image || images?.Pranjulimg}
+                alt="Pranjul Singh"
                 className="h-full w-full object-cover rounded-[30px]"
               />
             </motion.div>

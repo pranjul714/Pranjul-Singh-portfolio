@@ -5,10 +5,11 @@ import * as Yup from "yup";
 import { Send, AlertCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import images from "../../assets/img";
-
 import { sendContactMessage } from "../../services/api";
+import { useScrollReveal } from "../../hooks/useScrollAnimation";
 
 export default function Contact() {
+  const containerRef = useScrollReveal();
   const validationSchema = Yup.object({
     name: Yup.string().min(2, "Name is too short").required("Name is required"),
     email: Yup.string()
@@ -43,14 +44,12 @@ export default function Contact() {
   });
 
   return (
-    <section className="relative py-32 px-6 lg:px-24 overflow-hidden min-h-screen flex flex-col items-center justify-center">
+    <section ref={containerRef} className="relative py-32 px-6 lg:px-24 overflow-hidden min-h-screen flex flex-col items-center justify-center">
       
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] -z-10 animate-pulse" />
 
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }} 
-        whileInView={{ opacity: 1, y: 0 }} 
-        viewport={{ once: true }}
+      <div 
+        data-gsap
         className="text-center mb-16 relative z-20"
       >
         <h2 className="text-emerald-400 font-bold tracking-widest uppercase text-sm mb-3">
@@ -59,15 +58,12 @@ export default function Contact() {
         <h1 className="text-4xl lg:text-6xl font-extrabold text-white leading-tight">
           Let’s build something <span className="text-emerald-400">great</span> together.
         </h1>
-      </motion.div>
+      </div>
 
       <div className="relative w-full max-w-4xl px-4">
 
-        <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+        <div
+          data-gsap
           className="absolute hidden lg:block -left-35 top-1/4 -translate-y-1/2 z-20 pointer-events-none"
         >
           <img 
@@ -75,12 +71,10 @@ export default function Contact() {
             alt="Peeking Character" 
             className="h-[280px] lg:h-[420px] w-auto object-contain drop-shadow-[-10px_20px_30px_rgba(0,0,0,0.5)]"
           />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
+        <div
+          data-gsap
           className="relative z-10 bg-white/[0.03] backdrop-blur-md border border-white/10 p-8 lg:p-12 rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)]"
         >
           <form onSubmit={formik.handleSubmit} className="space-y-6">
@@ -166,7 +160,7 @@ export default function Contact() {
             </motion.button>
 
           </form>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

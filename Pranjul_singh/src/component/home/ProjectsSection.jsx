@@ -1,25 +1,11 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { getProjects } from "../../services/api";
 import { ExternalLink, Github, Code2, Rocket, Globe } from "lucide-react";
+import { useTextReveal, useStaggerCards } from "../../hooks/useScrollAnimation";
 
 export default function ProjectsSection() {
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
+  const headerRef = useTextReveal();
+  const gridRef = useStaggerCards(".gsap-card");
 
   const [projects, setProjects] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -60,10 +46,8 @@ export default function ProjectsSection() {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+        <div
+          ref={headerRef}
           className="text-center mb-20"
         >
           <h2 className="text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
@@ -72,14 +56,11 @@ export default function ProjectsSection() {
           <p className="text-emerald-100/60 text-lg max-w-2xl mx-auto font-medium">
             Innovative digital solutions crafted with modern full-stack architectures.
           </p>
-        </motion.div>
+        </div>
 
         {/* Projects Grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.05 }}
+        <div
+          ref={gridRef}
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-20"
         >
           {loading ? (
@@ -98,12 +79,10 @@ export default function ProjectsSection() {
             ))
           ) : projects.length > 0 ? (
             projects.map((project, index) => (
-              <motion.div
+              <div
                 key={index}
-                variants={item}
-                whileHover={{ y: -12 }}
-                className="group relative bg-white/[0.03] backdrop-blur-md border border-white/10 
-                           rounded-[2.5rem] p-8 transition-all duration-500 hover:border-emerald-500/30 
+                className="gsap-card group relative bg-white/[0.03] backdrop-blur-md border border-white/10 
+                           rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-3 hover:border-emerald-500/30 
                            hover:bg-white/[0.05] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col"
               >
                 {/* Project Image Container */}
@@ -160,14 +139,14 @@ export default function ProjectsSection() {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             ))
           ) : (
             <div className="col-span-full py-20 text-center bg-white/[0.02] border border-dashed border-white/10 rounded-[2.5rem]">
                <p className="text-emerald-100/40 text-lg">No projects found. Add some in your Admin Panel!</p>
             </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
