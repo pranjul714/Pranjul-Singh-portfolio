@@ -45,5 +45,6 @@ export const getHome = () => api.get('/home');
 export const updateHome = (data) => api.post('/home', data);
 export const getAbout = () => api.get('/about');
 export const updateAbout = (data) => api.post('/about', data);
+export const getVisitorStats = () => api.get('/stats/visitors');
 
 export default api;

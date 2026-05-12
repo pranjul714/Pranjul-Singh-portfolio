@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getProjects, getSkills, getContacts } from '../services/api';
-import { Briefcase, Trophy, Mail, Users } from 'lucide-react';
+import { getProjects, getSkills, getContacts, getVisitorStats } from '../services/api';
+import { Briefcase, Trophy, Mail, Users, Globe, Eye } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -8,26 +8,33 @@ const Dashboard = () => {
     projects: 0,
     skills: 0,
     contacts: 0,
-    visitors: 1250 // Mock data
+    totalVisits: 0,
+    todayVisits: 0
   });
+  const [recentVisitors, setRecentVisitors] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [projRes, skillRes, contactRes] = await Promise.all([
+        const [projRes, skillRes, contactRes, visitorRes] = await Promise.all([
           getProjects(),
           getSkills(),
-          getContacts()
+          getContacts(),
+          getVisitorStats()
         ]);
+        
         setStats({
           projects: projRes.data.length,
           skills: skillRes.data.length,
           contacts: contactRes.data.length,
-         
+          totalVisits: visitorRes.data.totalVisits,
+          todayVisits: visitorRes.data.todayVisits
         });
+        
+        setRecentVisitors(visitorRes.data.latestVisitors || []);
       } catch (error) {
-        // Silently handle
+        console.error("Dashboard fetch error:", error);
       } finally {
         setLoading(false);
       }
@@ -36,10 +43,10 @@ const Dashboard = () => {
   }, []);
 
   const statCards = [
-    { title: 'Total Projects', value: stats.projects, icon: <Briefcase />, color: '#6366f1' },
-    { title: 'Skills Listed', value: stats.skills, icon: <Trophy />, color: '#10b981' },
-    { title: 'New Inquiries', value: stats.contacts, icon: <Mail />, color: '#f59e0b' },
-   
+    { title: 'Total Visits', value: stats.totalVisits, icon: <Eye />, color: '#8b5cf6' },
+    { title: 'Visits Today', value: stats.todayVisits, icon: <Users />, color: '#ec4899' },
+    { title: 'Projects', value: stats.projects, icon: <Briefcase />, color: '#6366f1' },
+    { title: 'New Messages', value: stats.contacts, icon: <Mail />, color: '#f59e0b' },
   ];
 
   return (
@@ -73,26 +80,44 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
+        
         <div className="recent-activity glass-card">
-          <h3>System Status</h3>
-          <ul className="status-list">
-            <li>
-              <span className="status-dot online"></span>
-              <span>Backend Server: Online</span>
-            </li>
-            <li>
-              <span className="status-dot online"></span>
-              <span>Database Connection: Healthy</span>
-            </li>
-            <li>
-              <span className="status-dot online"></span>
-              <span>Email Service: Connected</span>
-            </li>
-            <li>
-              <span className="status-dot warning"></span>
-              <span>Storage Usage: 45%</span>
-            </li>
-          </ul>
+          <div className="section-header">
+            <h3>Recent Visitors</h3>
+            <Globe size={18} className="text-emerald-400" />
+          </div>
+          <div className="visitors-table-wrapper">
+            <table className="visitors-table">
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>IP Address</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentVisitors.length > 0 ? (
+                  recentVisitors.map((visitor, index) => (
+                    <tr key={index}>
+                      <td>
+                        <span className="location-text">
+                          {visitor.city}, {visitor.country}
+                        </span>
+                      </td>
+                      <td className="ip-text">{visitor.ip}</td>
+                      <td className="time-text">
+                        {new Date(visitor.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>No visitors tracked yet</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

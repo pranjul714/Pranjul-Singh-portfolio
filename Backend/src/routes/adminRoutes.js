@@ -7,10 +7,34 @@ import Skill from "../models/Skill.js";
 import Contact from "../models/Contact.js";
 import Home from "../models/Home.js";
 import About from "../models/About.js";
+import { Visitor } from "../models/visitor.model.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/multerMiddleware.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
 
+
+// @route   GET /api/admin/stats/visitors
+// @desc    Get visitor statistics
+router.get("/stats/visitors", protect, async (req, res) => {
+  try {
+    const totalVisits = await Visitor.countDocuments();
+    const latestVisitors = await Visitor.find().sort({ createdAt: -1 }).limit(10);
+    
+    // Get stats for today
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todayVisits = await Visitor.countDocuments({ createdAt: { $gte: startOfToday } });
+
+    res.json({
+      success: true,
+      totalVisits,
+      todayVisits,
+      latestVisitors
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // @route   GET /api/admin/contacts
 // @desc    Get all contact messages

@@ -7,6 +7,7 @@ import morgan from "morgan";
 import nodemailer from "nodemailer";
 import adminRoutes from "./routes/adminRoutes.js";
 import Contact from "./models/Contact.js";
+import { trackVisitor } from "./middleware/visitor.middleware.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use(helmet());
 
 // ── Request Logging ───────────────────────────────────────────────
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+app.use(trackVisitor);
 
 // ── Rate Limiting ─────────────────────────────────────────────────
 const limiter = rateLimit({
