@@ -5,10 +5,11 @@ import { useTextReveal, useStaggerCards } from "../../hooks/useScrollAnimation";
 
 export default function ProjectsSection() {
   const headerRef = useTextReveal();
-  const gridRef = useStaggerCards(".gsap-card");
-
+  
   const [projects, setProjects] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+
+  const gridRef = useStaggerCards(".gsap-card", [projects]);
 
   React.useEffect(() => {
     const fetchProjects = async () => {

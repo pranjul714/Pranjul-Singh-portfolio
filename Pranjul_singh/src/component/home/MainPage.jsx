@@ -2,7 +2,6 @@ import React from "react";
 import { Download, Rocket, Code2, Globe } from "lucide-react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import images from "../../assets/img";
-import myCV from "../../assets/Pranjul_Singh.pdf";
 import { NavLink } from "react-router-dom";
 import { getHomeData } from "../../services/api";
 
@@ -124,8 +123,8 @@ export default function MainPage() {
             >
               
                  <a
-              href={homeData?.resume_url || myCV}
-              download="Pranjul_Singh_CV.pdf"
+              href={homeData?.resume_url || '#'}
+              download=""
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-3 text-emerald-950 font-semibold w-fit"

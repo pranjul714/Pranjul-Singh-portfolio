@@ -4,14 +4,20 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * useScrollReveal — GSAP ScrollTrigger hook
- * Animates elements into view as user scrolls.
- *
- * @param {string} selector  - CSS selector of elements to animate inside the container
- * @param {object} options   - GSAP animation options
- * @returns {ref}            - Attach to the container element
- */
+if (typeof window !== "undefined") {
+  let timeoutId;
+  const observer = new ResizeObserver(() => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+  });
+  // Wait for document.body to exist
+  setTimeout(() => {
+    if (document.body) observer.observe(document.body);
+  }, 100);
+}
+
 export function useScrollReveal(selector = "[data-gsap]", options = {}) {
   const containerRef = useRef(null);
 
@@ -22,22 +28,25 @@ export function useScrollReveal(selector = "[data-gsap]", options = {}) {
     const elements = container.querySelectorAll(selector);
     if (!elements.length) return;
 
-    const defaults = {
-      opacity: 0,
-      y: 60,
-      duration: 0.9,
-      ease: "power3.out",
-      stagger: 0.12,
-      scrollTrigger: {
-        trigger: container,
-        start: "top 85%",
-        toggleActions: "play none none none",
-        once: true,
-      },
-    };
-
     const ctx = gsap.context(() => {
-      gsap.from(elements, { ...defaults, ...options });
+      gsap.fromTo(
+        elements,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: container,
+            start: "top 85%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+          ...options
+        }
+      );
     }, container);
 
     return () => ctx.revert();
@@ -46,10 +55,7 @@ export function useScrollReveal(selector = "[data-gsap]", options = {}) {
   return containerRef;
 }
 
-/**
- * useParallax — Subtle parallax scroll effect on an element
- * @param {number} speed - Parallax intensity (default 30px)
- */
+
 export function useParallax(speed = 30) {
   const ref = useRef(null);
 
@@ -87,18 +93,21 @@ export function useTextReveal() {
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      gsap.from(el, {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 88%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-      });
+      gsap.fromTo(el, 
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 88%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        }
+      );
     });
 
     return () => ctx.revert();
@@ -110,36 +119,43 @@ export function useTextReveal() {
 /**
  * useStaggerCards — Stagger animation for a grid of cards
  */
-export function useStaggerCards(selector = ".gsap-card") {
+export function useStaggerCards(selector = ".gsap-card", dependencies = []) {
   const containerRef = useRef(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    // Check if elements actually exist in DOM yet (fixes async loading warnings)
+    const elements = container.querySelectorAll(selector);
+    if (!elements.length) return;
+
     const ctx = gsap.context(() => {
-      gsap.from(selector, {
-        opacity: 0,
-        y: 80,
-        scale: 0.95,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: {
-          amount: 0.6,
-          grid: "auto",
-          from: "start",
-        },
-        scrollTrigger: {
-          trigger: container,
-          start: "top 80%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-      });
+      gsap.fromTo(elements, 
+        { opacity: 0, y: 80, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          ease: "power3.out",
+          stagger: {
+            amount: 0.6,
+            grid: "auto",
+            from: "start",
+          },
+          scrollTrigger: {
+            trigger: container,
+            start: "top 80%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+        }
+      );
     }, container);
 
     return () => ctx.revert();
-  }, [selector]);
+  }, [selector, ...dependencies]);
 
   return containerRef;
 }

@@ -24,7 +24,7 @@ const Dashboard = () => {
           projects: projRes.data.length,
           skills: skillRes.data.length,
           contacts: contactRes.data.length,
-          visitors: 1250
+         
         });
       } catch (error) {
         // Silently handle
@@ -39,7 +39,7 @@ const Dashboard = () => {
     { title: 'Total Projects', value: stats.projects, icon: <Briefcase />, color: '#6366f1' },
     { title: 'Skills Listed', value: stats.skills, icon: <Trophy />, color: '#10b981' },
     { title: 'New Inquiries', value: stats.contacts, icon: <Mail />, color: '#f59e0b' },
-    { title: 'Total Visitors', value: stats.visitors, icon: <Users />, color: '#ec4899' },
+   
   ];
 
   return (

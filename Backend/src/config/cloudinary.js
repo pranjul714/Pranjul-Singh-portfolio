@@ -3,9 +3,9 @@ import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
 cloudinary.config({
-  cloud_name: "dp4ys7vhw",
-  api_key: "747115241865951",
-  api_secret: "jB8o2GoPLah9g2to-fufXkttC0s"
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 // ─── Professional Upload (Dono handle karega)
@@ -15,8 +15,10 @@ const uploadOnCloudinary = async (source) => {
 
     // source yahan 'file path' bhi ho sakta hai (Menu Image)
     // aur 'base64 string' bhi (QR Code)
+    const isPdf = source.toLowerCase().endsWith('.pdf');
+    
     const response = await cloudinary.uploader.upload(source, {
-      resource_type: "auto",
+      resource_type: isPdf ? "raw" : "auto",
       folder: "portfolio_assets" // Sari images ek folder mein rahengi
     }); 
 

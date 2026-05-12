@@ -15,9 +15,11 @@ const Projects = () => {
     tech: '',
     github: '',
     live: '',
-    image: '',
-    icon: '',
     category: ''
+  });
+  const [files, setFiles] = useState({
+    image: null,
+    icon: null
   });
 
   const fetchProjects = async () => {
@@ -43,9 +45,11 @@ const Projects = () => {
       tech: project.tech ? project.tech.join(', ') : '',
       github: project.github || '',
       live: project.live || '',
-      image: project.image || '',
-      icon: project.icon || '',
       category: project.category || ''
+    });
+    setFiles({
+      image: null,
+      icon: null
     });
     setShowModal(true);
   };
@@ -64,17 +68,27 @@ const Projects = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dataToSend = {
-      ...formData,
-      tech: formData.tech.split(',').map(item => item.trim()).filter(item => item !== '')
-    };
+    
+    const formPayload = new FormData();
+    formPayload.append('title', formData.title);
+    formPayload.append('desc', formData.desc);
+    formPayload.append('github', formData.github);
+    formPayload.append('live', formData.live);
+    formPayload.append('category', formData.category);
+    
+    // Tech arrays
+    const techArray = formData.tech.split(',').map(item => item.trim()).filter(item => item !== '');
+    techArray.forEach(t => formPayload.append('tech', t));
+    
+    if (files.image) formPayload.append('image', files.image);
+    if (files.icon) formPayload.append('icon', files.icon);
 
     try {
       if (currentProject) {
-        await updateProject(currentProject._id, dataToSend);
+        await updateProject(currentProject._id, formPayload);
         toast.success('Project updated successfully');
       } else {
-        await createProject(dataToSend);
+        await createProject(formPayload);
         toast.success('Project created successfully');
       }
       setShowModal(false);
@@ -87,7 +101,8 @@ const Projects = () => {
 
   const resetForm = () => {
     setCurrentProject(null);
-    setFormData({ title: '', desc: '', tech: '', github: '', live: '', image: '', icon: '', category: '' });
+    setFormData({ title: '', desc: '', tech: '', github: '', live: '', category: '' });
+    setFiles({ image: null, icon: null });
   };
 
   return (
@@ -214,22 +229,22 @@ const Projects = () => {
                 <h3>Visual Assets</h3>
                 <div className="form-grid">
                   <div className="form-group">
-                    <label>Project Thumbnail URL</label>
+                    <label>Project Thumbnail (JPG/PNG)</label>
                     <input 
-                      type="text" 
-                      value={formData.image} 
-                      onChange={e => setFormData({...formData, image: e.target.value})} 
-                      placeholder="Image URL"
+                      type="file" 
+                      accept="image/*"
+                      onChange={e => setFiles({...files, image: e.target.files[0]})} 
                     />
+                    {currentProject?.image && <small><a href={currentProject.image} target="_blank" rel="noreferrer" style={{color: '#34d399'}}>View Current Image</a></small>}
                   </div>
                   <div className="form-group">
-                    <label>Tech Icon URL (Optional)</label>
+                    <label>Tech Icon (Optional)</label>
                     <input 
-                      type="text" 
-                      value={formData.icon} 
-                      onChange={e => setFormData({...formData, icon: e.target.value})} 
-                      placeholder="Icon URL"
+                      type="file" 
+                      accept="image/*"
+                      onChange={e => setFiles({...files, icon: e.target.files[0]})} 
                     />
+                    {currentProject?.icon && <small><a href={currentProject.icon} target="_blank" rel="noreferrer" style={{color: '#34d399'}}>View Current Icon</a></small>}
                   </div>
                 </div>
               </div>

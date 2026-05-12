@@ -12,6 +12,21 @@ dotenv.config();
 
 const app = express();
 
+// ── CORS ──────────────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (origin.startsWith("http://localhost") || origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
+
 // ── Security Headers ──────────────────────────────────────────────
 app.use(helmet());
 
@@ -38,22 +53,6 @@ const contactLimiter = rateLimit({
 // ── Body Parser ───────────────────────────────────────────────────
 app.use(express.json({ limit: "10kb" })); // Prevent large payload attacks
 
-// ── CORS ──────────────────────────────────────────────────────────
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (mobile apps, curl, Postman)
-      if (!origin) return callback(null, true);
-      // Allow localhost and Vercel deployments
-      if (origin.startsWith("http://localhost") || origin.endsWith(".vercel.app")) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
 
 // ── Nodemailer Config ─────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
@@ -90,7 +89,8 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
     if (
       process.env.EMAIL_USER &&
       process.env.EMAIL_PASS &&
-      !process.env.EMAIL_USER.includes("your_email")
+      !process.env.EMAIL_USER.includes("your_email") &&
+      !process.env.EMAIL_PASS.includes("your_gmail_app_password_here")
     ) {
       const mailOptions = {
         from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,

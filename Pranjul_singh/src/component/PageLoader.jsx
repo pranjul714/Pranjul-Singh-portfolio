@@ -32,7 +32,7 @@ export default function PageLoader({ isLoading }) {
                     delay: i * 0.04,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className={`text-3xl lg:text-5xl font-black tracking-tight ${
+                  className={`text-4xl lg:text-6xl p-3 font-black tracking-tight ${
                     char === " " ? "mr-3" : ""
                   } ${i >= 8 ? "text-emerald-400" : "text-white"}`}
                 >

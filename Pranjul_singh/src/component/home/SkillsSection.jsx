@@ -5,10 +5,11 @@ import { useTextReveal, useStaggerCards } from "../../hooks/useScrollAnimation";
 
 export default function SkillsSection() {
   const headerRef = useTextReveal();
-  const gridRef = useStaggerCards(".gsap-card");
-
+  
   const [skills, setSkills] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+
+  const gridRef = useStaggerCards(".gsap-card", [skills]);
 
   const iconMap = {
     Layout: <Layout size={18} />,

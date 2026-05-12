@@ -8,7 +8,9 @@ import ParticleBackground from "../ParticleBackground.jsx";
 const MainPage = lazy(() => import("./MainPage.jsx"));
 const About = lazy(() => import("./About.jsx"));
 const ProjectsSection = lazy(() => import("./ProjectsSection.jsx"));
+const TimelineSection = lazy(() => import("./TimelineSection.jsx"));
 const SkillsSection = lazy(() => import("./SkillsSection.jsx"));
+const GithubGraph = lazy(() => import("./GithubGraph.jsx"));
 const Contact = lazy(() => import("./Contact.jsx"));
 
 export default function Home() {
@@ -91,12 +93,15 @@ export default function Home() {
             <About />
           </section>
 
+          <TimelineSection />
+
           <section id="projects" ref={sectionRefs.projects} className="section-style">
             <ProjectsSection />
           </section>
 
           <section id="skills" ref={sectionRefs.skills} className="section-style">
             <SkillsSection />
+            <GithubGraph />
           </section>
 
           <section id="contact" ref={sectionRefs.contact} className="section-style">

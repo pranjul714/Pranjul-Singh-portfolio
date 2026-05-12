@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getHome, updateHome, getAbout, updateAbout } from '../services/api';
-import { Settings as SettingsIcon, Save, Info, Home } from 'lucide-react';
+import { Settings as SettingsIcon, Save, Info, Home, FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import './Settings.css';
 
@@ -17,8 +17,8 @@ const Settings = () => {
           getHome().catch(() => ({ data: {} })),
           getAbout().catch(() => ({ data: {} }))
         ]);
-        if (homeRes.data) setHomeData(homeRes.data);
-        if (aboutRes.data) setAboutData(aboutRes.data);
+        if (homeRes.data) setHomeData(prev => ({ ...prev, ...homeRes.data }));
+        if (aboutRes.data) setAboutData(prev => ({ ...prev, ...aboutRes.data }));
       } catch (error) {
         console.error('Error fetching settings:', error);
       } finally {
@@ -38,10 +38,10 @@ const Settings = () => {
       formData.append('hero_subtitle', homeData.hero_subtitle);
       
       if (files.profile_image) formData.append('profile_image', files.profile_image);
-      if (files.resume) formData.append('resume', files.resume);
 
       await updateHome(formData);
       toast.success('Hero settings updated successfully');
+
       
       // Refresh to show updated URLs
       const { data } = await getHome();
@@ -61,6 +61,28 @@ const Settings = () => {
       toast.error('Failed to update about settings');
     }
   };
+
+  const handleResumeSubmit = async (e) => {
+    e.preventDefault();
+    if (!files.resume) {
+      toast.warning('Please select a resume file to upload');
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append('resume', files.resume);
+
+      await updateHome(formData);
+      toast.success('Resume updated successfully');
+      
+      const { data } = await getHome();
+      if (data) setHomeData(data);
+      setFiles({ ...files, resume: null });
+    } catch (error) {
+      toast.error('Failed to update resume');
+    }
+  };
+
 
   return (
     <div className="settings-page fade-in">
@@ -86,11 +108,7 @@ const Settings = () => {
               <label>Hero Subtitle</label>
               <textarea rows="2" value={homeData.hero_subtitle} onChange={e => setHomeData({...homeData, hero_subtitle: e.target.value})}></textarea>
             </div>
-            <div className="form-group">
-              <label>Resume (PDF)</label>
-              <input type="file" accept=".pdf" onChange={e => setFiles({...files, resume: e.target.files[0]})} />
-              {homeData.resume_url && <small><a href={homeData.resume_url} target="_blank" rel="noreferrer" style={{color: '#34d399'}}>View Current Resume</a></small>}
-            </div>
+
             <div className="form-group">
               <label>Profile Image (JPG/PNG)</label>
               <input type="file" accept="image/*" onChange={e => setFiles({...files, profile_image: e.target.files[0]})} />
@@ -124,6 +142,23 @@ const Settings = () => {
             <button type="submit" className="save-btn">
               <Save size={18} />
               <span>Save About Changes</span>
+            </button>
+          </form>
+        </section>
+        <section className="settings-section glass-card">
+          <div className="section-header">
+            <FileText size={20} />
+            <h2>Resume Settings</h2>
+          </div>
+          <form onSubmit={handleResumeSubmit}>
+            <div className="form-group">
+              <label>Resume (PDF)</label>
+              <input type="file" accept=".pdf" onChange={e => setFiles({...files, resume: e.target.files[0]})} />
+              {homeData.resume_url && <small><a href={homeData.resume_url} target="_blank" rel="noreferrer" style={{color: '#34d399'}}>View Current Resume</a></small>}
+            </div>
+            <button type="submit" className="save-btn">
+              <Save size={18} />
+              <span>Upload Resume</span>
             </button>
           </form>
         </section>
