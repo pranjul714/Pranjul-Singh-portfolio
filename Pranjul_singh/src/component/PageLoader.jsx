@@ -28,8 +28,8 @@ export default function PageLoader({ isLoading }) {
                   initial={{ y: 60, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{
-                    duration: 0.6,
-                    delay: i * 0.04,
+                    duration: 0.9,
+                    delay: i * 0.05,
                     ease: [0.16, 1, 0.3, 1],
                   }}
                   className={`text-4xl lg:text-6xl p-3 font-black tracking-tight ${
