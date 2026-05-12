@@ -38,7 +38,7 @@ export default function ProjectsSection() {
   };
 
   return (
-    <section className="relative min-h-screen w-full px-6 lg:px-24 py-32 overflow-hidden">
+    <section className="relative min-h-screen w-full px-6 lg:px-24 py-20 lg:py-32 overflow-hidden">
 
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
@@ -49,12 +49,12 @@ export default function ProjectsSection() {
         {/* Header Section */}
         <div
           ref={headerRef}
-          className="text-center mb-20"
+          className="text-center mb-16 lg:mb-20"
         >
-          <h2 className="text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
+          <h2 className="text-4xl lg:text-6xl font-black text-white mb-6 tracking-tight">
             Featured <span className="text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]">Projects</span>
           </h2>
-          <p className="text-emerald-100/60 text-lg max-w-2xl mx-auto font-medium">
+          <p className="text-emerald-100/60 text-base lg:text-lg max-w-2xl mx-auto font-medium">
             Innovative digital solutions crafted with modern full-stack architectures.
           </p>
         </div>
@@ -62,20 +62,16 @@ export default function ProjectsSection() {
         {/* Projects Grid */}
         <div
           ref={gridRef}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-20"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-20"
         >
           {loading ? (
             // Project Skeletons
-            Array(6).fill(0).map((_, i) => (
-              <div key={i} className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[2.5rem] p-8 animate-pulse">
-                <div className="w-full h-48 bg-white/5 rounded-2xl mb-6"></div>
+            Array(3).fill(0).map((_, i) => (
+              <div key={i} className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 animate-pulse">
+                <div className="w-full h-40 lg:h-48 bg-white/5 rounded-2xl mb-6"></div>
                 <div className="h-6 w-3/4 bg-white/5 rounded mb-4"></div>
                 <div className="h-4 w-full bg-white/5 rounded mb-2"></div>
                 <div className="h-4 w-2/3 bg-white/5 rounded mb-8"></div>
-                <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-white/5 rounded-full"></div>
-                  <div className="h-6 w-16 bg-white/5 rounded-full"></div>
-                </div>
               </div>
             ))
           ) : projects.length > 0 ? (
@@ -83,12 +79,12 @@ export default function ProjectsSection() {
               <div
                 key={index}
                 className="gsap-card group relative bg-white/[0.03] backdrop-blur-md border border-white/10 
-                           rounded-[2.5rem] p-8 transition-all duration-500 hover:-translate-y-3 hover:border-emerald-500/30 
+                           rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 transition-all duration-500 hover:-translate-y-3 hover:border-emerald-500/30 
                            hover:bg-white/[0.05] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col"
               >
                 {/* Project Image Container */}
                 {project.image && (
-                  <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl border border-white/5">
+                  <div className="relative w-full h-40 lg:h-48 mb-6 overflow-hidden rounded-2xl border border-white/5">
                     <img 
                       src={project.image} 
                       alt={project.title} 
@@ -103,28 +99,28 @@ export default function ProjectsSection() {
 
                 {/* Card Header: Icon & Links */}
                 <div className="flex justify-between items-start mb-6">
-                  <div className="p-4 bg-white/[0.05] rounded-2xl group-hover:bg-emerald-500/10 transition-colors">
+                  <div className="p-3 lg:p-4 bg-white/[0.05] rounded-2xl group-hover:bg-emerald-500/10 transition-colors">
                     <IconRenderer iconName={project.icon} />
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 lg:gap-3">
                     {project.github && (
-                      <a href={project.github} target="_blank" rel="noreferrer" className="p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">
-                        <Github size={20} />
+                      <a href={project.github} target="_blank" rel="noreferrer" className="p-2 lg:p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">
+                        <Github size={18} />
                       </a>
                     )}
                     {project.live && (
-                      <a href={project.live} target="_blank" rel="noreferrer" className="p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">
-                        <ExternalLink size={20} />
+                      <a href={project.live} target="_blank" rel="noreferrer" className="p-2 lg:p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">
+                        <ExternalLink size={18} />
                       </a>
                     )}
                   </div>
                 </div>
 
                 {/* Title & Description */}
-                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-xl lg:text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors line-clamp-1">
                   {project.title}
                 </h3>
-                <p className="text-emerald-100/60 leading-relaxed mb-8 text-sm flex-grow">
+                <p className="text-emerald-100/60 leading-relaxed mb-8 text-sm flex-grow line-clamp-3">
                   {project.desc}
                 </p>
 
@@ -133,8 +129,8 @@ export default function ProjectsSection() {
                   {project.tech?.map((tech, i) => (
                     <span
                       key={i}
-                      className="text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 
-                                 text-emerald-400 px-4 py-1.5 rounded-xl border border-emerald-500/20"
+                      className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 
+                                 text-emerald-400 px-3 lg:px-4 py-1.5 rounded-xl border border-emerald-500/20"
                     >
                       {tech}
                     </span>

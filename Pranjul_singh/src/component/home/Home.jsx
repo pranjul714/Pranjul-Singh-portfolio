@@ -70,7 +70,7 @@ export default function Home() {
   );
 
   return (
-    <div className="relative min-h-screen font-sans bg-black text-white">
+    <div className="relative min-h-screen font-sans bg-black text-white overflow-x-hidden">
       <ParticleBackground />
 
       {/* FIXED SOCIALS SIDEBAR */}

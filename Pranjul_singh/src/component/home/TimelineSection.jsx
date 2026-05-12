@@ -101,7 +101,7 @@ export default function TimelineSection() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full py-32 px-6 overflow-hidden min-h-screen">
+    <section ref={containerRef} className="relative w-full py-20 lg:py-32 px-6 overflow-hidden min-h-screen">
       
       {/* Background Decor */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
@@ -109,11 +109,11 @@ export default function TimelineSection() {
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
-        <div className="text-center mb-24">
-          <h2 className="text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
+        <div className="text-center mb-16 lg:mb-24">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 tracking-tight">
             My <span className="text-emerald-400">Journey</span>
           </h2>
-          <p className="text-emerald-100/60 text-lg">
+          <p className="text-emerald-100/60 text-base lg:text-lg">
             A timeline of my education, experience, and growth.
           </p>
         </div>
@@ -122,12 +122,12 @@ export default function TimelineSection() {
         <div className="relative w-full flex flex-col items-center">
           
           {/* The Vertical Line (Background) */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 bg-white/10 rounded-full" />
+          <div className="absolute left-4 lg:left-1/2 -translate-x-1/2 top-0 bottom-0 w-1 bg-white/10 rounded-full" />
           
           {/* The Vertical Line (Animated Fill) */}
           <div 
             ref={lineRef}
-            className="absolute left-1/2 -translate-x-1/2 top-0 w-1 bg-gradient-to-b from-emerald-400 to-blue-500 rounded-full origin-top"
+            className="absolute left-4 lg:left-1/2 -translate-x-1/2 top-0 w-1 bg-gradient-to-b from-emerald-400 to-blue-500 rounded-full origin-top"
           />
 
           {/* Timeline Items */}
@@ -135,25 +135,25 @@ export default function TimelineSection() {
             const isLeft = index % 2 === 0;
 
             return (
-              <div key={item.id} className={`relative w-full flex justify-center mb-16 ${isLeft ? 'lg:justify-start' : 'lg:justify-end'}`}>
+              <div key={item.id} className={`relative w-full flex justify-start lg:justify-center mb-12 lg:mb-16 ${isLeft ? 'lg:flex-row-reverse' : ''}`}>
                 
-                {/* Center Icon */}
-                <div className="timeline-icon absolute left-1/2 -translate-x-1/2 top-0 w-12 h-12 bg-[#0A0A0A] border-4 border-emerald-500 rounded-full flex items-center justify-center text-emerald-400 z-20 shadow-[0_0_20px_rgba(52,211,153,0.4)]">
+                {/* Icon Circle */}
+                <div className="timeline-icon absolute left-4 lg:left-1/2 -translate-x-1/2 top-0 w-10 h-10 lg:w-12 lg:h-12 bg-[#0A0A0A] border-4 border-emerald-500 rounded-full flex items-center justify-center text-emerald-400 z-20 shadow-[0_0_20px_rgba(52,211,153,0.4)] transition-transform duration-300">
                   {item.icon}
                 </div>
 
                 {/* Card */}
-                <div className={`timeline-card w-full max-w-md bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[2rem] p-8 shadow-2xl mt-16 lg:mt-0 ${isLeft ? 'lg:mr-12' : 'lg:ml-12'}`}>
+                <div className={`timeline-card w-full max-w-full lg:max-w-md bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[1.5rem] lg:rounded-[2rem] p-6 lg:p-8 shadow-2xl ml-12 lg:ml-0 ${isLeft ? 'lg:mr-12' : 'lg:ml-12'}`}>
                   
                   {/* Date Badge */}
-                  <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold tracking-widest mb-4">
+                  <div className="inline-block px-3 py-1 lg:px-4 lg:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] lg:text-xs font-bold tracking-widest mb-4">
                     {item.date}
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-white mb-1">{item.title}</h3>
-                  <h4 className="text-sm font-semibold text-emerald-100/50 mb-4 uppercase tracking-wider">{item.subtitle}</h4>
+                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-1">{item.title}</h3>
+                  <h4 className="text-xs lg:text-sm font-semibold text-emerald-100/50 mb-4 uppercase tracking-wider">{item.subtitle}</h4>
                   
-                  <p className="text-emerald-100/70 leading-relaxed text-sm">
+                  <p className="text-emerald-100/70 leading-relaxed text-xs lg:text-sm">
                     {item.description}
                   </p>
                 </div>

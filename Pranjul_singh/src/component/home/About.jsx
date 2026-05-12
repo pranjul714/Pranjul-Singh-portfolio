@@ -33,16 +33,16 @@ export default function About() {
   ];
 
   return (
-    <section ref={containerRef} className="relative py-32 px-6 lg:px-24 overflow-hidden">
+    <section ref={containerRef} className="relative py-20 lg:py-32 px-6 lg:px-24 overflow-hidden">
       
       {/* Background Decorative Glow */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] -z-10 animate-pulse" />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         
         {/* LEFT SIDE – Image with Orbital Particles */}
-        <div className="relative flex justify-center order-2 lg:order-1">
-          <div className="relative w-[320px] h-[380px] lg:w-[420px] lg:h-[500px] flex items-center justify-center">
+        <div className="relative flex justify-center">
+          <div className="relative w-[280px] h-[340px] sm:w-[320px] sm:h-[380px] lg:w-[420px] lg:h-[500px] flex items-center justify-center">
             
             {/* ROTATING PARTICLE RING */}
             <motion.div
@@ -62,7 +62,7 @@ export default function About() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative z-10 h-full w-full bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] flex items-center justify-center p-8 overflow-hidden"
+              className="relative z-10 h-full w-full bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[40px] lg:rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] flex items-center justify-center p-6 lg:p-8 overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 to-transparent pointer-events-none" />
               <motion.img
@@ -77,40 +77,40 @@ export default function About() {
         </div>
 
         {/* RIGHT SIDE – Content */}
-        <div className="space-y-8 order-1 lg:order-2">
+        <div className="space-y-6 lg:space-y-8 text-center lg:text-left">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <h2 className="text-4xl lg:text-6xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white tracking-tight">
               About <span className="text-emerald-400">Me</span>
             </h2>
-            <div className="w-20 h-1.5 bg-emerald-500 rounded-full" />
+            <div className="w-20 h-1.5 bg-emerald-500 rounded-full mx-auto lg:mx-0" />
           </motion.div>
 
           <p
             data-gsap
-            className="text-lg text-emerald-100/70 leading-relaxed max-w-xl font-medium"
+            className="text-base sm:text-lg text-emerald-100/70 leading-relaxed max-w-xl font-medium mx-auto lg:mx-0"
           >
             {aboutData.bio}
           </p>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5 pt-4">
             {statsData.map((stat, index) => (
               <motion.div
                 key={index}
                 data-gsap
                 whileHover={{ y: -5, borderColor: "rgba(52,211,153,0.4)" }}
-                className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center text-center transition-all"
+                className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-5 lg:p-6 flex flex-col items-center text-center transition-all"
               >
                 <div className="p-3 bg-emerald-400/10 text-emerald-400 rounded-2xl mb-3">
                   {stat.icon}
                 </div>
-                <h3 className="text-3xl font-black text-white">{stat.value}</h3>
-                <p className="text-xs text-emerald-200/50 uppercase tracking-widest mt-1 font-bold">{stat.label}</p>
+                <h3 className="text-2xl lg:text-3xl font-black text-white">{stat.value}</h3>
+                <p className="text-[10px] text-emerald-200/50 uppercase tracking-widest mt-1 font-bold">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -120,12 +120,13 @@ export default function About() {
             whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(16,185,129,0.3)" }}
             whileTap={{ scale: 0.95 }}
             onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-10 py-4 rounded-2xl font-bold shadow-xl transition-all"
+            className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-10 py-4 rounded-2xl font-bold shadow-xl transition-all"
           >
             Get in Touch
           </motion.button>
         </div>
       </div>
     </section>
+
   );
 }

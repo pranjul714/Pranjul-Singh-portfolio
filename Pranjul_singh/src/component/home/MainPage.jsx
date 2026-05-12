@@ -103,23 +103,23 @@ export default function MainPage() {
 
           <motion.h1
             variants={item}
-            className="text-5xl lg:text-7xl font-extrabold text-white"
+            className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-tight"
           >
             {homeData.hero_title}
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="text-lg text-emerald-100/70 max-w-lg"
+            className="text-base sm:text-lg text-emerald-100/70 max-w-lg"
           >
             {homeData.hero_subtitle}
           </motion.p>
 
-          <motion.div variants={item} className="flex flex-wrap gap-5 pt-4">
+          <motion.div variants={item} className="flex flex-wrap gap-4 sm:gap-5 pt-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-10 py-4 rounded-2xl font-bold flex items-center gap-2"
+              className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-8 lg:px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-2"
             >
               
                  <a
@@ -133,22 +133,16 @@ export default function MainPage() {
               Download CV
             </a>
             </motion.button>
-
-         
           </motion.div>
-
-          {/* DOWNLOAD CV */}
-        
         </motion.div>
 
-     
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative flex justify-center lg:justify-end"
+          className="relative flex justify-center lg:justify-end order-first lg:order-last"
         >
-          <div className="relative w-[320px] h-[380px] lg:w-[440px] lg:h-[540px] flex items-center justify-center">
+          <div className="relative w-[280px] h-[340px] sm:w-[320px] sm:h-[380px] lg:w-[440px] lg:h-[540px] flex items-center justify-center">
 
             {/* Orbit Ring */}
             <motion.div
