@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { getProjects } from "../../services/api";
 import { ExternalLink, Github, Code2, Rocket, Globe } from "lucide-react";
-import { io } from "socket.io-client";
 
 export default function ProjectsSection() {
   const container = {
@@ -31,21 +30,12 @@ export default function ProjectsSection() {
         const { data } = await getProjects();
         setProjects(data);
       } catch (error) {
-        // Silently handle or use a UI toast if needed
+        // Data loads on page visit — no action needed on error
       } finally {
         setLoading(false);
       }
     };
     fetchProjects();
-
-    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, "");
-    const socket = io(socketUrl);
-    
-    socket.on("data_updated", (data) => {
-      if (data.type === "projects") fetchProjects();
-    });
-
-    return () => socket.disconnect();
   }, []);
 
 

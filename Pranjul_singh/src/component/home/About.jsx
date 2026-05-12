@@ -113,9 +113,10 @@ export default function About() {
           <motion.button
             whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(16,185,129,0.3)" }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
             className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-10 py-4 rounded-2xl font-bold shadow-xl transition-all"
           >
-            Learn More
+            Get in Touch
           </motion.button>
         </div>
       </div>

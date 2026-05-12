@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Send, AlertCircle } from "lucide-react";
+import { toast } from "react-toastify";
 import images from "../../assets/img";
 
 import { sendContactMessage } from "../../services/api";
@@ -28,14 +29,13 @@ export default function Contact() {
       try {
         const { data } = await sendContactMessage(values);
         if (data.success) {
-          alert("✅ Message sent successfully!");
+          toast.success("✅ Message sent successfully! I'll get back to you soon.");
           resetForm();
         } else {
-          alert(" Failed: " + data.message);
+          toast.error("Failed to send: " + (data.message || "Please try again."));
         }
       } catch (error) {
-        
-        
+        toast.error("❌ Could not send message. Please email me directly at pranjulsingh38@email.com");
       } finally {
         setSubmitting(false);
       }

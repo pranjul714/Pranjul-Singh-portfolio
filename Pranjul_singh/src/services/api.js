@@ -1,13 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001/api').replace(/\/$/, '');
-
-// Ensure the URL ends with /api
-const finalBaseURL = API_BASE_URL.endsWith('/api') ? API_BASE_URL : `${API_BASE_URL}/api`;
+// Strip trailing slash for consistency
+// VITE_API_URL should be set to your full backend URL e.g. https://your-backend.onrender.com
+const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5001').replace(/\/$/, '');
 
 const api = axios.create({
-  baseURL: finalBaseURL,
-  timeout: 10000, // 10 seconds timeout
+  baseURL: `${BASE}/api`,
+  timeout: 10000,
 });
 
 export const getProjects = () => api.get('/admin/projects');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../../services/api";
 import { 
   Plus, Trash2, Edit3, Save, X, Layout, 
   Zap, Mail, Settings, LogOut, ExternalLink, 
@@ -20,8 +20,7 @@ export default function AdminDashboard() {
   const [newSkill, setNewSkill] = useState({ name: "", category: "Frontend", proficiency: 80 });
 
   const token = localStorage.getItem("adminToken");
-  const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-  const API_URL = rawUrl.replace(/\/$/, "");
+  const authHeader = { headers: { Authorization: `Bearer ${token}` } };
 
   useEffect(() => {
     fetchData();
@@ -35,23 +34,21 @@ export default function AdminDashboard() {
 
   const fetchProjects = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/admin/projects`);
+      const { data } = await api.get('/admin/projects');
       setProjects(data);
     } catch (e) { toast.error("Failed to fetch projects"); }
   };
 
   const fetchSkills = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/admin/skills`);
+      const { data } = await api.get('/admin/skills');
       setSkills(data);
     } catch (e) { toast.error("Failed to fetch skills"); }
   };
 
   const fetchMessages = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/admin/contacts`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const { data } = await api.get('/admin/contacts', authHeader);
       setMessages(data);
     } catch (e) { toast.error("Failed to fetch messages"); }
   };
@@ -60,10 +57,7 @@ export default function AdminDashboard() {
     e.preventDefault();
     try {
       const techArray = newProject.tech.split(",").map(t => t.trim());
-      await axios.post(`${API_URL}/admin/projects`, 
-        { ...newProject, tech: techArray }, 
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post('/admin/projects', { ...newProject, tech: techArray }, authHeader);
       toast.success("Project added!");
       setNewProject({ title: "", desc: "", tech: "", github: "", live: "", icon: "Rocket" });
       fetchProjects();
@@ -73,9 +67,7 @@ export default function AdminDashboard() {
   const handleAddSkill = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/admin/skills`, newSkill, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.post('/admin/skills', newSkill, authHeader);
       toast.success("Skill added!");
       setNewSkill({ name: "", category: "Frontend", proficiency: 80 });
       fetchSkills();
@@ -85,9 +77,7 @@ export default function AdminDashboard() {
   const handleDelete = async (type, id) => {
     if (!window.confirm(`Delete this ${type}?`)) return;
     try {
-      await axios.delete(`${API_URL}/admin/${type}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/admin/${type}/${id}`, authHeader);
       toast.success(`${type} deleted`);
       fetchData();
     } catch (e) { toast.error(`Failed to delete ${type}`); }
