@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-const getBaseURL = () => {
-  const url = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/admin';
-  return url.endsWith('/api/admin') ? url : `${url.replace(/\/$/, '')}/api/admin`;
-};
+// VITE_API_URL = backend root e.g. http://localhost:5000 or https://your-backend.onrender.com
+const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
 
 const api = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: `${BASE}/api/admin`,
+  timeout: 10000,
 });
 
+// Auto-attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('adminToken');
@@ -18,6 +18,18 @@ api.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Auto-logout on 401 (token expired)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
 );
 
 export const login = (credentials) => api.post('/login', credentials);

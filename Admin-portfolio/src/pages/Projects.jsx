@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getProjects, createProject, updateProject, deleteProject } from '../services/api';
 import { Plus, Edit2, Trash2, ExternalLink, Code, Image as ImageIcon } from 'lucide-react';
-import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
 import './Projects.css';
 
@@ -34,15 +33,6 @@ const Projects = () => {
 
   useEffect(() => {
     fetchProjects();
-
-    const socketUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/admin$/, "");
-    const socket = io(socketUrl);
-    
-    socket.on("data_updated", (data) => {
-      if (data.type === "projects") fetchProjects();
-    });
-
-    return () => socket.disconnect();
   }, []);
 
   const handleEdit = (project) => {

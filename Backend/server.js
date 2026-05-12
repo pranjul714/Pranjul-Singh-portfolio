@@ -10,9 +10,15 @@ const PORT = process.env.PORT || 5000;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // Adjust this in production for security
-    methods: ["GET", "POST"]
-  }
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (origin.startsWith("http://localhost") || origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+      return callback(new Error("Socket.IO: Not allowed by CORS"));
+    },
+    methods: ["GET", "POST"],
+  },
 });
 
 // Connect to Database

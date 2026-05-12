@@ -40,7 +40,8 @@ const App = () => {
             <Route path="settings" element={<Settings />} />
           </Route>
 
-          <Route path="*" element={<Navigate to="/dashboard" />} />
+          {/* Unknown routes redirect to login */}
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
         <ToastContainer position="bottom-right" theme="dark" />
       </AuthProvider>
