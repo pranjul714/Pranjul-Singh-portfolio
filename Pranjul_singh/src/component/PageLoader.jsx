@@ -32,8 +32,8 @@ export default function PageLoader({ isLoading }) {
                     delay: i * 0.05,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className={`text-4xl lg:text-6xl p-3 font-black tracking-tight ${
-                    char === " " ? "mr-3" : ""
+                  className={`text-2xl sm:text-4xl lg:text-6xl p-1 sm:p-3 font-black tracking-tight ${
+                    char === " " ? "mr-1 sm:mr-3" : ""
                   } ${i >= 8 ? "text-emerald-400" : "text-white"}`}
                 >
                   {char === " " ? "\u00A0" : char}
@@ -46,7 +46,7 @@ export default function PageLoader({ isLoading }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.6 }}
-              className="text-emerald-400/60 text-sm font-bold uppercase tracking-[0.3em]"
+              className="text-emerald-400/60 text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em]"
             >
               Full-Stack Developer
             </motion.p>
