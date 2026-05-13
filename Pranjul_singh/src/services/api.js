@@ -6,7 +6,7 @@ const BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://loc
 
 const api = axios.create({
   baseURL: `${BASE}/api`,
-  timeout: 10000,
+  timeout: 60000, // 60 seconds timeout to handle Render free-tier cold starts
 });
 
 export const getProjects = () => api.get('/admin/projects');
