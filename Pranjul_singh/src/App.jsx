@@ -22,7 +22,8 @@ export default function App() {
 
     // Session Heartbeat (Every 30 seconds)
     const heartbeat = setInterval(() => {
-      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/heartbeat`, {
+      const BASE = import.meta.env.VITE_API_URL || 'https://pranjul-singh-portfolio-1.onrender.com';
+      fetch(`${BASE}/api/heartbeat`, {
         method: 'POST',
       }).catch(() => {}); // Silent fail
     }, 30000);
