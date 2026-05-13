@@ -19,7 +19,7 @@ if (!fs.existsSync('./public/temp')) fs.mkdirSync('./public/temp', { recursive: 
 const app = express();
 
 // Enable trust proxy to get real visitor IP
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 // ── CORS ──────────────────────────────────────────────────────────
 app.use(
