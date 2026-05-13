@@ -67,7 +67,7 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 to-transparent pointer-events-none" />
               <motion.img
                 src={images.cartoon01}
-                alt="About Me"
+                alt="Pranjul Singh - Full-Stack Web Developer"
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="relative z-10 max-h-[85%] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)] transition-transform duration-500 hover:scale-110"

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pranjul-singh.vercel.app/sitemap.xml
