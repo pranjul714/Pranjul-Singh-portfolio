@@ -81,7 +81,7 @@ export default function Home() {
       <div className="fixed left-8 bottom-0 z-50 hidden lg:flex flex-col gap-5 mb-10">
         <SocialLink href="https://github.com/pranjul714" icon={Github} label="GitHub" />
         <SocialLink href="https://www.linkedin.com/in/pranjulsingh714/" icon={Linkedin} label="LinkedIn" />
-        <SocialLink href="mailto:pranjulsingh38@email.com" icon={Mail} label="Email" />
+        <SocialLink href="mailto:pranjulsingh38@gmail.com" icon={Mail} label="Email" />
         <div className="w-px h-24 bg-gradient-to-t from-emerald-500/50 to-transparent mx-auto mt-2" />
       </div>
 

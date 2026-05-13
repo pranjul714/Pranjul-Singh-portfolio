@@ -5,12 +5,16 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import nodemailer from "nodemailer";
+import fs from "fs";
 import adminRoutes from "./routes/adminRoutes.js";
 import Contact from "./models/Contact.js";
 import { trackVisitor } from "./middleware/visitor.middleware.js";
 import { Visitor } from "./models/visitor.model.js";
 
 dotenv.config();
+
+// Ensure upload temp directory exists
+if (!fs.existsSync('./public/temp')) fs.mkdirSync('./public/temp', { recursive: true });
 
 const app = express();
 
@@ -52,7 +56,7 @@ app.use(limiter);
 // Stricter limit for contact form (spam protection)
 const contactLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5,                    // max 5 contact submissions per IP per hour
+  max: 10,                   // increased to 10 contact submissions per IP per hour for better testing
   message: { success: false, message: "Too many messages sent. Please try again after an hour." },
 });
 
@@ -62,7 +66,9 @@ app.use(express.json({ limit: "10kb" })); // Prevent large payload attacks
 
 // ── Nodemailer Config ─────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // use SSL
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -144,32 +150,41 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
     const newContact = await Contact.create({ name, email, subject, message });
 
     // Only send email if real credentials are configured
+    let emailSent = false;
     if (
       process.env.EMAIL_USER &&
       process.env.EMAIL_PASS &&
       !process.env.EMAIL_USER.includes("your_email") &&
       !process.env.EMAIL_PASS.includes("your_gmail_app_password_here")
     ) {
-      const mailOptions = {
-        from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-        to: process.env.EMAIL_USER,
-        replyTo: email,
-        subject: `New Inquiry: ${subject}`,
-        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-      };
-      await transporter.sendMail(mailOptions);
+      try {
+        const mailOptions = {
+          from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+          to: process.env.EMAIL_USER,
+          replyTo: email,
+          subject: `New Inquiry: ${subject}`,
+          text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        };
+        await transporter.sendMail(mailOptions);
+        emailSent = true;
+      } catch (mailError) {
+        console.error("📧 Mail Sending Error:", mailError);
+        // We don't return 500 here yet because it's saved in DB
+      }
     }
 
     req.app.get("io").emit("data_updated", { type: "contacts" });
 
     return res.status(200).json({
       success: true,
-      message: "Message sent successfully!",
+      message: emailSent 
+        ? "Message sent successfully!" 
+        : "Message saved, but email notification failed. I'll check it soon!",
       data: newContact,
     });
   } catch (error) {
     console.error("❌ Contact Error:", error);
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
   }
 });
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { getProjects } from "../../services/api";
+import { trackAction } from "../../services/tracking.js";
 import { ExternalLink, Github, Code2, Rocket, Globe } from "lucide-react";
 import { useTextReveal, useStaggerCards } from "../../hooks/useScrollAnimation";
 

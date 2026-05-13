@@ -15,9 +15,9 @@ const createAdmin = async () => {
     }
 
     const admin = new User({
-      username: "admin",
-      password: "admin123", // Change this later!
-      email: "admin@example.com" // Added email as it is required in the schema
+      username: process.env.ADMIN_USERNAME || "admin",
+      password: process.env.ADMIN_PASSWORD || "admin123",
+      email: process.env.ADMIN_EMAIL || "admin@example.com"
     });
 
     await admin.save();

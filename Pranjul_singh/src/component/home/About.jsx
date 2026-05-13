@@ -27,7 +27,7 @@ export default function About() {
   }, []);
 
   const statsData = [
-    { label: "", value: aboutData.experience_years || "fresher", icon: <Award size={20} /> },
+    { label: "Experience", value: aboutData.experience_years || "Fresher", icon: <Award size={20} /> },
     { label: "Education", value: aboutData.education || "B.Tech", icon: <CheckCircle2 size={20} /> },
     { label: "Status", value: "Active", icon: <User size={20} /> },
   ];

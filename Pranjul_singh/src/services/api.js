@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Strip trailing slash for consistency
 // VITE_API_URL should be set to your full backend URL e.g. https://your-backend.onrender.com
-const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5001').replace(/\/$/, '');
+const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
 
 const api = axios.create({
   baseURL: `${BASE}/api`,

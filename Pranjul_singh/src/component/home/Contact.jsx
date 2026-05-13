@@ -38,7 +38,8 @@ export default function Contact() {
           toast.error("Failed to send: " + (data.message || "Please try again."));
         }
       } catch (error) {
-        toast.error("❌ Could not send message. Please email me directly at pranjulsingh38@email.com");
+        const errorMsg = error.response?.data?.message || "Could not send message. Please email me directly at pranjulsingh38@gmail.com";
+        toast.error(`❌ ${errorMsg}`);
       } finally {
         setSubmitting(false);
       }
