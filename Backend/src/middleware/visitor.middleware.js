@@ -7,15 +7,18 @@ export const trackVisitor = async (req, res, next) => {
       return next();
     }
 
-    // Extract IP address
-    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
-    if (ip.includes(',')) ip = ip.split(',')[0].trim();
+    // Aggressive IP Extraction (Priority: X-Forwarded-For -> req.ip -> remoteAddress)
+    let ip = (req.headers['x-forwarded-for'] || "").split(',')[0].trim() || 
+             req.ip || 
+             req.socket.remoteAddress || 
+             "";
+    
     if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
 
     const userAgent = req.headers['user-agent'] || "Unknown";
     const referrer = req.headers['referer'] || "Direct";
 
-    // Parse User Agent for OS, Browser, and Device
+    // ... (Browser/OS detection logic stays the same) ...
     let browser = "Unknown Browser";
     let os = "Unknown OS";
     let deviceType = "Desktop";
@@ -32,7 +35,7 @@ export const trackVisitor = async (req, res, next) => {
     else if (userAgent.includes("iPhone")) { os = "iOS"; deviceType = "Mobile"; }
     else if (userAgent.includes("Linux")) os = "Linux";
 
-    // Deduplication: Check if this IP AND this specific Device/Browser visited in the last 30 minutes
+    // Deduplication (30 mins)
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
     const recentVisit = await Visitor.findOne({ 
       ip, 
@@ -42,26 +45,35 @@ export const trackVisitor = async (req, res, next) => {
     });
 
     if (recentVisit) {
-      // Update last seen and move on
-      recentVisit.set({ updatedAt: new Date() });
-      recentVisit.save().catch(() => {});
+      recentVisit.lastActive = new Date();
+      // Add a heartbeat/resume action if not already present in the last 5 minutes
+      const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const recentAction = recentVisit.actions.find(a => a.timestamp >= fiveMinsAgo);
+      
+      if (!recentAction) {
+        recentVisit.actions.push({ actionType: 'view', name: 'Session Active', timestamp: new Date() });
+      }
+      
+      await recentVisit.save().catch(() => {});
       return next();
     }
 
-    // Skip geo-lookup for localhost
+    // Geo-lookup Fallback for Development
     let geoData = {};
-    if (ip && !["127.0.0.1", "::1", "localhost"].includes(ip)) {
-      try {
-        const response = await fetch(`http://ip-api.com/json/${ip}`);
-        if (response.ok) geoData = await response.json();
-      } catch (err) {
-        console.error("Geo lookup failed:", err.message);
-      }
-    } else {
-      geoData = { city: "Localhost", regionName: "Internal", country: "Local" };
+    let targetIp = ip;
+    if (!ip || ["127.0.0.1", "::1", "localhost", "34.82.84.118"].includes(ip)) {
+      // If IP is local or server IP (like the Google IP you saw), use a fallback for testing
+      targetIp = "122.161.192.1"; 
     }
 
-    // Create new visitor entry
+    try {
+      const response = await fetch(`http://ip-api.com/json/${targetIp}`);
+      if (response.ok) geoData = await response.json();
+    } catch (err) {
+      console.error("Geo lookup failed:", err.message);
+    }
+
+    // Create new visitor entry with INITIAL lastActive and DEFAULT action
     const newVisitor = await Visitor.create({
       ip,
       city: geoData.city || "Unknown",
@@ -73,6 +85,8 @@ export const trackVisitor = async (req, res, next) => {
       referrer,
       lat: geoData.lat,
       lon: geoData.lon,
+      lastActive: new Date(),
+      actions: [{ actionType: 'view', name: 'Website Visit', timestamp: new Date() }]
     });
 
     // Production-ready Socket Notification: 
@@ -80,10 +94,13 @@ export const trackVisitor = async (req, res, next) => {
     const io = req.app.get("io");
     if (io) {
       io.emit("new_visitor", {
+        _id: newVisitor._id,
         city: newVisitor.city,
         country: newVisitor.country,
         device: newVisitor.deviceType,
-        os: newVisitor.os
+        os: newVisitor.os,
+        lat: newVisitor.lat,
+        lon: newVisitor.lon
       });
     }
 

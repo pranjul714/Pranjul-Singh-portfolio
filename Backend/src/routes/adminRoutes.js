@@ -33,11 +33,19 @@ router.get("/stats/visitors", protect, async (req, res) => {
       todayVisits,
       latestVisitors,
       recentActions: await Visitor.aggregate([
+        { $match: { actions: { $exists: true, $not: { $size: 0 } } } },
         { $unwind: "$actions" },
         { $sort: { "actions.timestamp": -1 } },
         { $limit: 20 },
-        { $project: { _id: 0, ip: 1, city: 1, type: "$actions.type", name: "$actions.name", timestamp: "$actions.timestamp" } }
-      ])
+        { $project: { 
+          _id: 0, 
+          ip: 1, 
+          city: 1, 
+          type: "$actions.actionType", 
+          name: "$actions.name", 
+          timestamp: "$actions.timestamp" 
+        } }
+      ]) || []
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

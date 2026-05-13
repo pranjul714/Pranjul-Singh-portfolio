@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getProjects, getSkills, getContacts, getVisitorStats } from '../services/api';
-import { Briefcase, Trophy, Mail, Users, Globe, Eye, RotateCcw } from 'lucide-react';
+import { Briefcase, Trophy, Mail, Users, Globe, Eye, RotateCcw, Rocket } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { toast } from 'react-toastify';
 import VisitorMap from '../components/VisitorMap';
@@ -85,7 +85,7 @@ const Dashboard = () => {
 
   const calculateDuration = (v) => {
     if (!v.lastActive || !v.createdAt) return '0s';
-    const durationMs = new Date(v.lastActive) - new Date(v.createdAt);
+    const durationMs = Math.max(0, new Date(v.lastActive) - new Date(v.createdAt));
     const mins = Math.floor(durationMs / 60000);
     const secs = Math.floor((durationMs % 60000) / 1000);
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;

@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PageLoader from "./component/PageLoader.jsx";
 import CustomCursor from "./component/CustomCursor.jsx";
+import Floating3D from "./component/Floating3D.jsx";
 
 // Lazy-loaded components
 const Home = lazy(() => import("./component/home/Home.jsx"));
@@ -42,6 +43,7 @@ export default function App() {
     <Router>
       <CustomCursor />
       <PageLoader isLoading={showIntro} />
+      <Floating3D />
       <div style={{ opacity: showIntro ? 0 : 1, transition: "opacity 1s ease" }}>
         <Suspense fallback={<PageLoader isLoading={true} />}>
         <Routes>

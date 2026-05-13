@@ -4,6 +4,7 @@ import { Github, Linkedin, Mail } from "lucide-react";
 import Navbar from "../Navbar/Navbar.jsx";
 import ParticleBackground from "../ParticleBackground.jsx";
 
+
 // Lazy Load Sections for Performance
 const MainPage = lazy(() => import("./MainPage.jsx"));
 const About = lazy(() => import("./About.jsx"));
@@ -70,8 +71,11 @@ export default function Home() {
   );
 
   return (
-    <div className="relative min-h-screen font-sans bg-black text-white overflow-x-hidden">
+    <div className="relative min-h-screen font-sans bg-transparent text-white overflow-x-hidden">
+      {/* Absolute Background Layer */}
+      <div className="fixed inset-0 bg-[#030303] -z-20" />
       <ParticleBackground />
+
 
       {/* FIXED SOCIALS SIDEBAR */}
       <div className="fixed left-8 bottom-0 z-50 hidden lg:flex flex-col gap-5 mb-10">
@@ -86,7 +90,7 @@ export default function Home() {
       <main className="relative z-10 px-4 lg:px-12 py-24 max-w-[1500px] mx-auto space-y-24">
         <Suspense fallback={<div className="h-screen flex items-center justify-center text-emerald-400">Loading...</div>}>
           <section id="home" ref={sectionRefs.home} className="section-style">
-            <MainPage />
+            <MainPage scrollToSection={scrollToSection} />
           </section>
 
           <section id="about" ref={sectionRefs.about} className="section-style">

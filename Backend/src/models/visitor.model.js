@@ -37,8 +37,8 @@ const visitorSchema = new mongoose.Schema({
   lon: Number,
   lastActive: { type: Date, default: Date.now },
   actions: [{
-    type: { type: String }, // 'view' or 'click'
-    name: String,           // page name or button name
+    actionType: String, // 'view' or 'click'
+    name: String,       // page name or button name
     timestamp: { type: Date, default: Date.now }
   }]
 }, { timestamps: true });

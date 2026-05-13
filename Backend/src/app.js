@@ -14,6 +14,9 @@ dotenv.config();
 
 const app = express();
 
+// Enable trust proxy to get real visitor IP
+app.set('trust proxy', true);
+
 // ── CORS ──────────────────────────────────────────────────────────
 app.use(
   cors({
@@ -86,7 +89,7 @@ app.post("/api/track", async (req, res) => {
     const visitor = await Visitor.findOne({ ip, createdAt: { $gte: dayAgo } }).sort({ createdAt: -1 });
 
     if (visitor) {
-      visitor.actions.push({ type, name });
+      visitor.actions.push({ actionType: type, name });
       await visitor.save();
       
       // Notify admin live that an action happened

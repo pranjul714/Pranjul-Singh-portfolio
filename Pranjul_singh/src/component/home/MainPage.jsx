@@ -1,15 +1,14 @@
 import React from "react";
 import { trackAction } from "../../services/tracking.js";
-import { Download, Rocket, Code2, Globe } from "lucide-react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 import images from "../../assets/img";
-import { NavLink } from "react-router-dom";
 import { getHomeData } from "../../services/api";
 
-export default function MainPage() {
+export default function MainPage({ scrollToSection }) {
   const [homeData, setHomeData] = React.useState({
-    hero_title: "Hi, I'm Pranjul 👋",
-    hero_subtitle: "Full-Stack Engineer specializing in React and Node.js/Express, building scalable applications with clean architecture."
+    hero_title: "Full-Stack Engineer",
+    hero_subtitle: "Based in New Delhi, India."
   });
 
   React.useEffect(() => {
@@ -24,170 +23,131 @@ export default function MainPage() {
     fetchHome();
   }, []);
 
-  /* ---------------- PREMIUM STAGGER ---------------- */
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.18,
-        delayChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.2, delayChildren: 0.3 },
     },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 40 },
+    hidden: { opacity: 0, y: 30 },
     show: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      },
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
-  /* ---------------- 3D PARALLAX ---------------- */
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const rotateX = useTransform(y, [-200, 200], [8, -8]);
-  const rotateY = useTransform(x, [-200, 200], [-8, 8]);
-
-  function handleMouseMove(e) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    x.set(e.clientX - centerX);
-    y.set(e.clientY - centerY);
-  }
-
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
-  }
-
-  const particles = [
-    { size: "w-4 h-4", color: "bg-emerald-400", pos: "top-0 left-1/2 -translate-x-1/2" },
-    { size: "w-3 h-3", color: "bg-blue-400", pos: "bottom-0 left-1/2 -translate-x-1/2" },
-    { size: "w-2 h-2", color: "bg-white", pos: "top-1/2 right-0 -translate-y-1/2" },
-    { size: "w-2.5 h-2.5", color: "bg-emerald-300", pos: "top-1/2 left-0 -translate-y-1/2" },
-  ];
-
   return (
-    <section
-      id="home"
-      className="relative min-h-screen w-full flex items-center justify-center px-6 lg:px-24 py-20 overflow-hidden"
-    >
-      {/* Background Glow */}
-      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl -z-10" />
+    <section className="relative min-h-screen w-full flex flex-col items-center justify-center pt-10 overflow-hidden backdrop-blur-[4px]">
+      
+      {/* Background Aura */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[140px] -z-10" />
 
-      <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center z-10">
-
-        {/* LEFT CONTENT */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="max-w-7xl w-full flex flex-col items-center text-center z-10 px-6 relative mt-16 lg:mt-12"
+      >
+        {/* 1. TOP TYPOGRAPHY */}
         <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col space-y-8"
+          variants={item}
+          className="text-[15vw] lg:text-[13vw] font-black text-white leading-[0.8] tracking-tighter uppercase z-0 mb-[-2vw]"
         >
-          <motion.div
-            variants={item}
-            className="inline-block bg-emerald-400/10 backdrop-blur-xl border border-emerald-400/20 px-4 py-2 rounded-full w-fit"
-          >
-            <p className="text-sm font-semibold text-emerald-400 flex items-center gap-2">
-              <Rocket size={14} /> Available for Freelance & Full-Time
-            </p>
-          </motion.div>
-
-          <motion.h1
-            variants={item}
-            className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-tight"
-          >
-            {homeData.hero_title}
-          </motion.h1>
-
-          <motion.p
-            variants={item}
-            className="text-base sm:text-lg text-emerald-100/70 max-w-lg"
-          >
-            {homeData.hero_subtitle}
-          </motion.p>
-
-          <motion.div variants={item} className="flex flex-wrap gap-4 sm:gap-5 pt-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-8 lg:px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-2"
-            >
-              
-                  <a
-                    href={homeData?.resume_url || '#'}
-                    download=""
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 text-emerald-950 font-semibold w-fit"
-                    onClick={() => trackAction('click', 'Download CV')}
-                  >
-                    <Download size={20} />
-                    Download CV
-                  </a>
-            </motion.button>
-          </motion.div>
+          Full-Stack
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative flex justify-center lg:justify-end order-first lg:order-last"
-        >
-          <div className="relative w-[280px] h-[340px] sm:w-[320px] sm:h-[380px] lg:w-[440px] lg:h-[540px] flex items-center justify-center">
+        {/* 2. CENTER PIECE (Image & Overlapping Developer Text) */}
+        <div className="relative flex items-center justify-center w-full mt-3 lg:mt-10">
+          
+       
+          
+          {/* "DEVE" - Behind Layer */}
+          <div className="text-[11vw] lg:text-[13vw] font-black text-outline uppercase z-0 -mr-[4vw] lg:-mr-[4vw] tracking-tighter opacity-90">
+            DEVE
+          </div>
 
-            {/* Orbit Ring */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-              className="absolute w-[115%] h-[115%]"
-            >
-              {particles.map((p, i) => (
-                <div
-                  key={i}
-                  className={`absolute ${p.size} ${p.color} ${p.pos} rounded-full`}
-                />
-              ))}
-              <div className="absolute inset-0 border border-emerald-500/10 rounded-full" />
-            </motion.div>
-
-            {/* Image Card */}
-            <motion.div
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              style={{ rotateX, rotateY }}
-              className="relative z-10 w-full h-full backdrop-blur-md border border-emerald-500/20 rounded-[40px] shadow-2xl overflow-hidden p-6 bg-white/5"
-            >
+          {/* PROFILE IMAGE - Middle Layer */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1,
+              y: [0, -10, 0] 
+            }}
+            transition={{ 
+              initial: { delay: 0.8, duration: 1 },
+              y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className="relative z-10 flex items-center justify-center"
+          >
+            {/* Main Image - Now Transparent & Clean with Rounded Bottom */}
+            <div className="relative w-[360px] lg:w-[480px] rounded-[150px] overflow-hidden shadow-2xl">
               <img
                 src={homeData?.profile_image || images?.Pranjulimg}
                 alt="Pranjul Singh"
-                className="h-full w-full object-cover rounded-[30px]"
+                className="w-full h-full object-cover relative z-20"
               />
-            </motion.div>
+            </div>
+            
+            {/* Floating Interaction Icon */}
+            <div className="absolute bottom-0 -right-4 lg:-right-8 z-40">
+               <motion.div
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                className="w-12 h-12 lg:w-16 lg:h-16 rounded-full border border-white/20 flex items-center justify-center text-white backdrop-blur-xl bg-white/5 cursor-pointer shadow-2xl"
+              >
+                <ArrowUpRight size={24} className="text-emerald-400" />
+              </motion.div>
+            </div>
+          </motion.div>
 
-            {/* Floating Badge */}
-            <motion.div
-              animate={{ x: [0, 12, 0] }}
-              transition={{ duration: 5, repeat: Infinity }}
-              className="absolute -right-6 top-20 bg-emerald-500 text-emerald-950 px-5 py-2 rounded-2xl font-black shadow-2xl text-[10px] flex items-center gap-2"
-            >
-              <Globe size={12} /> FULL-STACK
-            </motion.div>
+          {/* "LOPER" - Front Layer */}
+          <div className="text-[11vw] lg:text-[13vw] font-black text-outline uppercase z-20 -ml-[4vw] lg:-ml-[6vw] pointer-events-none tracking-tighter">
+            LOPER
+          </div>
 
+         
+        </div>
+
+        {/* 3. SUBTITLE (Dynamic bio from API) */}
+        <motion.div variants={item} className="flex flex-col items-center gap-8 mt-10 z-40">
+          
+
+          {/* 4. ACTIONS */}
+          <div className="flex flex-wrap gap-5 w-full justify-center">
+             <motion.button 
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+               onClick={() => {
+                 trackAction('click', 'Main Visit Site');
+                 scrollToSection?.('projects');
+               }}
+               className="group relative overflow-hidden bg-white text-black px-12 py-5 rounded-full font-bold flex items-center gap-3 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+             >
+               <span className="relative z-10">EXPLORE PROJECTS</span>
+               <div className="bg-emerald-400 w-8 h-8 rounded-full flex items-center justify-center group-hover:w-full group-hover:rounded-none absolute right-2 transition-all duration-500 z-0 opacity-20 group-hover:opacity-100" />
+               <ArrowUpRight size={20} className="relative z-10 group-hover:rotate-45 transition-transform duration-300" />
+             </motion.button>
+
+             <motion.a 
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+               href={homeData?.resume_url || "#"} 
+               target="_blank" 
+               rel="noreferrer"
+               download
+               onClick={() => trackAction('click', 'Main Download CV')}
+               className="border-2 border-white/10 backdrop-blur-xl text-white px-12 py-5 rounded-full font-bold hover:border-white transition-all flex items-center justify-center tracking-widest text-xs"
+             >
+               DOWNLOAD CV
+             </motion.a>
           </div>
         </motion.div>
-        
-      </div>
+
+      </motion.div>
     </section>
   );
 }

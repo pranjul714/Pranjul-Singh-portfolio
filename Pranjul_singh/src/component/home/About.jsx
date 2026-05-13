@@ -57,12 +57,12 @@ export default function About() {
             </motion.div>
 
             {/* DARK GLASS CARD */}
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative z-10 h-full w-full bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[40px] lg:rounded-[50px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] flex items-center justify-center p-6 lg:p-8 overflow-hidden"
+              className="relative z-10 h-full w-full bg-transparent border border-white/5 rounded-[40px] lg:rounded-[50px] flex items-center justify-center p-6 lg:p-8 overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 to-transparent pointer-events-none" />
               <motion.img
@@ -104,7 +104,7 @@ export default function About() {
                 key={index}
                 data-gsap
                 whileHover={{ y: -5, borderColor: "rgba(52,211,153,0.4)" }}
-                className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-5 lg:p-6 flex flex-col items-center text-center transition-all"
+                className="bg-transparent border border-white/5 rounded-3xl p-5 lg:p-6 flex flex-col items-center text-center transition-all"
               >
                 <div className="p-3 bg-emerald-400/10 text-emerald-400 rounded-2xl mb-3">
                   {stat.icon}

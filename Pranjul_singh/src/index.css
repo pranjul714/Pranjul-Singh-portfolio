@@ -1,19 +1,94 @@
 @import "tailwindcss";
 
+:root {
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --radius-pinterest: 2.5rem;
+  --emerald-glow: rgba(16, 185, 129, 0.15);
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Pinterest Style Section */
 .section-style {
   width: 100%;
   min-height: 90vh;
-  border-radius: 3.5rem;
+  border-radius: var(--radius-pinterest);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.01);
+  background: transparent;
   backdrop-filter: none;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: none;
   scroll-margin-top: 6rem;
-  transition: border-color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 2rem;
 }
 
 .section-style:hover {
-  border-color: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.9);
 }
 
+/* Pinterest-like Card Utility */
+.pinterest-card {
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.pinterest-card:hover {
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #111;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Typography Enhancements */
+.text-balance {
+  text-wrap: balance;
+}
+
+.heading-gradient {
+  background: linear-gradient(135deg, #fff 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.9);
+}
+
+.text-outline:hover {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 1);
+}
