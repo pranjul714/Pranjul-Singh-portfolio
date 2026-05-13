@@ -38,7 +38,16 @@ export default function Contact() {
           toast.error("Failed to send: " + (data.message || "Please try again."));
         }
       } catch (error) {
-        const errorMsg = error.response?.data?.message || "Could not send message. Please email me directly at pranjulsingh38@gmail.com";
+        let errorMsg = "Could not send message. Please email me directly at pranjulsingh38@gmail.com";
+        
+        if (error.response) {
+          // Server responded with a status code other than 2xx
+          errorMsg = error.response.data?.message || `Server Error (${error.response.status})`;
+        } else if (error.request) {
+          // Request was made but no response received
+          errorMsg = "Backend is not responding. It might be waking up (Render free tier), please try again in 30 seconds.";
+        }
+        
         toast.error(`❌ ${errorMsg}`);
       } finally {
         setSubmitting(false);
@@ -58,9 +67,9 @@ export default function Contact() {
         <h2 className="text-emerald-400 font-bold tracking-widest uppercase text-[10px] lg:text-sm mb-3">
           Get in Touch
         </h2>
-        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white leading-tight">
           Let’s build something <span className="text-emerald-400">great</span> together.
-        </h1>
+        </h2>
       </div>
 
       <div className="relative w-full max-w-4xl">

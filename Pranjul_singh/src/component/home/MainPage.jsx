@@ -53,7 +53,9 @@ export default function MainPage({ scrollToSection }) {
         className="max-w-7xl w-full flex flex-col items-center text-center z-10 px-6 relative mt-16 lg:mt-12"
       >
         {/* 1. TOP TYPOGRAPHY */}
+        <h1 className="sr-only">Pranjul Singh - Full-Stack Developer</h1>
         <motion.div
+          aria-hidden="true"
           variants={item}
           className="text-[15vw] lg:text-[13vw] font-black text-white leading-[0.8] tracking-tighter uppercase z-0 mb-[-2vw]"
         >
@@ -105,7 +107,7 @@ export default function MainPage({ scrollToSection }) {
           </motion.div>
 
           {/* "LOPER" - Front Layer */}
-          <div className="text-[11vw] lg:text-[13vw] font-black text-outline uppercase z-20 -ml-[4vw] lg:-ml-[6vw] pointer-events-none tracking-tighter">
+          <div aria-hidden="true" className="text-[11vw] lg:text-[13vw] font-black text-outline uppercase z-20 -ml-[4vw] lg:-ml-[6vw] pointer-events-none tracking-tighter">
             LOPER
           </div>
 

@@ -4,6 +4,10 @@ import axios from 'axios';
 // VITE_API_URL should be set to your full backend URL e.g. https://your-backend.onrender.com
 const BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : 'https://pranjul-singh-portfolio-1.onrender.com')).replace(/\/$/, '');
 
+if (import.meta.env.PROD) {
+  console.log('🌐 API Base URL:', BASE);
+}
+
 const api = axios.create({
   baseURL: `${BASE}/api`,
   timeout: 60000, // 60 seconds timeout to handle Render free-tier cold starts

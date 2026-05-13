@@ -22,14 +22,31 @@ const app = express();
 app.set('trust proxy', 1);
 
 // ── CORS ──────────────────────────────────────────────────────────
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5000",
+  "https://pranjul-singh-portfolio.vercel.app",
+  "https://portfolio-admin-phi-umber.vercel.app",
+  "https://pranjul-singh.vercel.app"
+];
+
 app.use(
   cors({
     origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (origin.startsWith("http://localhost") || origin.endsWith(".vercel.app")) {
+      
+      const isAllowed = allowedOrigins.includes(origin) || 
+                        origin.endsWith(".vercel.app") || 
+                        origin.endsWith(".onrender.com");
+
+      if (isAllowed) {
         return callback(null, true);
+      } else {
+        console.log("🚫 CORS Blocked Origin:", origin);
+        return callback(new Error("Not allowed by CORS"));
       }
-      return callback(new Error("Not allowed by CORS"));
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
@@ -136,6 +153,7 @@ app.post("/api/heartbeat", async (req, res) => {
 
 // Contact Route with spam rate limiting
 app.post("/api/contact", contactLimiter, async (req, res) => {
+  console.log("📩 Incoming contact request from:", req.headers.origin);
   try {
     const { name, email, subject, message } = req.body;
 
