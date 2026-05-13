@@ -104,12 +104,24 @@ export default function ProjectsSection() {
                   </div>
                   <div className="flex gap-2 lg:gap-3">
                     {project.github && (
-                      <a href={project.github} target="_blank" rel="noreferrer" className="p-2 lg:p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">
+                      <a 
+                        href={project.github} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="p-2 lg:p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all"
+                        onClick={() => trackAction('click', `Project GitHub: ${project.title}`)}
+                      >
                         <Github size={18} />
                       </a>
                     )}
                     {project.live && (
-                      <a href={project.live} target="_blank" rel="noreferrer" className="p-2 lg:p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all">
+                      <a 
+                        href={project.live} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="p-2 lg:p-2.5 text-emerald-100/50 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all"
+                        onClick={() => trackAction('click', `Project Live: ${project.title}`)}
+                      >
                         <ExternalLink size={18} />
                       </a>
                     )}

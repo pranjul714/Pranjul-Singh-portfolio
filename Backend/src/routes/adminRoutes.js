@@ -1,6 +1,8 @@
 import express from "express";
 const router = express.Router();
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import nodemailer from "nodemailer";
 import User from "../models/User.js";
 import Project from "../models/Project.js";
 import Skill from "../models/Skill.js";
@@ -29,7 +31,13 @@ router.get("/stats/visitors", protect, async (req, res) => {
       success: true,
       totalVisits,
       todayVisits,
-      latestVisitors
+      latestVisitors,
+      recentActions: await Visitor.aggregate([
+        { $unwind: "$actions" },
+        { $sort: { "actions.timestamp": -1 } },
+        { $limit: 20 },
+        { $project: { _id: 0, ip: 1, city: 1, type: "$actions.type", name: "$actions.name", timestamp: "$actions.timestamp" } }
+      ])
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -69,6 +77,72 @@ router.post("/login", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+
+router.post("/forget-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h", // Password reset token should be short-lived
+    });
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/reset-password/${token}`;
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Password Reset Request',
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <h2>Password Reset Request</h2>
+          <p>You requested to reset your password. Click the button below to proceed:</p>
+          <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #10b981; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
+          <p style="margin-top: 20px; font-size: 0.8rem; color: #666;">If you didn't request this, please ignore this email. This link will expire in 1 hour.</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: "Password reset link sent to your email" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+router.post("/reset-password/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Assign plain password; the User model's pre-save hook will handle hashing
+    user.password = password;
+    await user.save();
+
+    res.json({ success: true, message: "Password reset successfully" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: "Invalid or expired token" });
   }
 });
 

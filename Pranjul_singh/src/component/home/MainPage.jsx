@@ -1,4 +1,5 @@
 import React from "react";
+import { trackAction } from "../../services/tracking.js";
 import { Download, Rocket, Code2, Globe } from "lucide-react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import images from "../../assets/img";
@@ -122,16 +123,17 @@ export default function MainPage() {
               className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-8 lg:px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-2"
             >
               
-                 <a
-              href={homeData?.resume_url || '#'}
-              download=""
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 text-emerald-950 font-semibold w-fit"
-            >
-              <Download size={20} />
-              Download CV
-            </a>
+                  <a
+                    href={homeData?.resume_url || '#'}
+                    download=""
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-3 text-emerald-950 font-semibold w-fit"
+                    onClick={() => trackAction('click', 'Download CV')}
+                  >
+                    <Download size={20} />
+                    Download CV
+                  </a>
             </motion.button>
           </motion.div>
         </motion.div>

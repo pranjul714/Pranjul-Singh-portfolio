@@ -135,27 +135,32 @@ export default function TimelineSection() {
             const isLeft = index % 2 === 0;
 
             return (
-              <div key={item.id} className={`relative w-full flex justify-start lg:justify-center mb-12 lg:mb-16 ${isLeft ? 'lg:flex-row-reverse' : ''}`}>
+              <div key={item.id} className={`relative w-full flex flex-col lg:flex-row items-center lg:items-start mb-20 lg:mb-32 ${isLeft ? 'lg:flex-row-reverse' : ''}`}>
                 
+                {/* Empty space for the other side */}
+                <div className="hidden lg:block lg:w-1/2" />
+
                 {/* Icon Circle */}
-                <div className="timeline-icon absolute left-4 lg:left-1/2 -translate-x-1/2 top-0 w-10 h-10 lg:w-12 lg:h-12 bg-[#0A0A0A] border-4 border-emerald-500 rounded-full flex items-center justify-center text-emerald-400 z-20 shadow-[0_0_20px_rgba(52,211,153,0.4)] transition-transform duration-300">
+                <div className="timeline-icon absolute left-4 lg:left-1/2 -translate-x-1/2 top-0 w-10 h-10 lg:w-14 lg:h-14 bg-[#0A0A0A] border-4 border-emerald-500 rounded-full flex items-center justify-center text-emerald-400 z-20 shadow-[0_0_20px_rgba(52,211,153,0.4)]">
                   {item.icon}
                 </div>
 
-                {/* Card */}
-                <div className={`timeline-card w-full max-w-full lg:max-w-md bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[1.5rem] lg:rounded-[2rem] p-6 lg:p-8 shadow-2xl ml-12 lg:ml-0 ${isLeft ? 'lg:mr-12' : 'lg:ml-12'}`}>
-                  
-                  {/* Date Badge */}
-                  <div className="inline-block px-3 py-1 lg:px-4 lg:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] lg:text-xs font-bold tracking-widest mb-4">
-                    {item.date}
+                {/* Card Container */}
+                <div className={`w-full lg:w-1/2 flex ${isLeft ? 'justify-end lg:pr-16' : 'justify-start lg:pl-16'}`}>
+                  <div className="timeline-card w-full max-w-[90%] sm:max-w-md bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-2xl ml-12 lg:ml-0">
+                    
+                    {/* Date Badge */}
+                    <div className="inline-block px-3 py-1 lg:px-4 lg:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] lg:text-xs font-bold tracking-widest mb-4 uppercase">
+                      {item.date}
+                    </div>
+                    
+                    <h3 className="text-xl lg:text-3xl font-black text-white mb-1 leading-tight">{item.title}</h3>
+                    <h4 className="text-xs lg:text-sm font-bold text-emerald-400/80 mb-4 uppercase tracking-[0.2em]">{item.subtitle}</h4>
+                    
+                    <p className="text-emerald-100/60 leading-relaxed text-sm lg:text-base font-medium">
+                      {item.description}
+                    </p>
                   </div>
-                  
-                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-1">{item.title}</h3>
-                  <h4 className="text-xs lg:text-sm font-semibold text-emerald-100/50 mb-4 uppercase tracking-wider">{item.subtitle}</h4>
-                  
-                  <p className="text-emerald-100/70 leading-relaxed text-xs lg:text-sm">
-                    {item.description}
-                  </p>
                 </div>
               </div>
             );

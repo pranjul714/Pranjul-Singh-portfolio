@@ -8,6 +8,7 @@ import nodemailer from "nodemailer";
 import adminRoutes from "./routes/adminRoutes.js";
 import Contact from "./models/Contact.js";
 import { trackVisitor } from "./middleware/visitor.middleware.js";
+import { Visitor } from "./models/visitor.model.js";
 
 dotenv.config();
 
@@ -37,9 +38,9 @@ app.use(trackVisitor);
 
 // ── Rate Limiting ─────────────────────────────────────────────────
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,                  // max 100 requests per IP per window
-  message: { success: false, message: "Too many requests, please try again after 15 minutes." },
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 500,                 // Increased to 500 requests per minute for smooth dashboard usage
+  message: { success: false, message: "Too many requests, please try again after a minute." },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -71,6 +72,58 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/admin", adminRoutes);
+
+// ── Action Tracking Route ─────────────────────────────────────────
+app.post("/api/track", async (req, res) => {
+  try {
+    const { type, name } = req.body;
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
+    if (ip.includes(',')) ip = ip.split(',')[0].trim();
+    if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+
+    // Find the latest visitor record for this IP within the last 24 hours (more lenient)
+    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const visitor = await Visitor.findOne({ ip, createdAt: { $gte: dayAgo } }).sort({ createdAt: -1 });
+
+    if (visitor) {
+      visitor.actions.push({ type, name });
+      await visitor.save();
+      
+      // Notify admin live that an action happened
+      const io = req.app.get("io");
+      if (io) {
+        io.emit("visitor_action", {
+          ip,
+          type,
+          name,
+          city: visitor.city
+        });
+      }
+    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Tracking Error:", error);
+    res.status(500).json({ success: false });
+  }
+});
+
+// ── Session Heartbeat Route ───────────────────────────────────────
+app.post("/api/heartbeat", async (req, res) => {
+  try {
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
+    if (ip.includes(',')) ip = ip.split(',')[0].trim();
+    if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+
+    const visitor = await Visitor.findOne({ ip }).sort({ createdAt: -1 });
+    if (visitor) {
+      visitor.lastActive = new Date();
+      await visitor.save();
+    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+});
 
 // Contact Route with spam rate limiting
 app.post("/api/contact", contactLimiter, async (req, res) => {

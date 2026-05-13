@@ -18,14 +18,13 @@ const ParticleBackground = () => {
 
     let canvasWidth, canvasHeight;
     let centerX, centerY;
-    let mouseX = null;
-    let mouseY = null;
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
     let speed = DEFAULT_SPEED;
     const targetSpeed = DEFAULT_SPEED;
     const particles = [];
-
-    let currentCenterX = window.innerWidth * 0.5;
-    let currentCenterY = window.innerHeight * 0.5;
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
@@ -39,6 +38,11 @@ const ParticleBackground = () => {
       centerY = canvasHeight * 0.5;
     };
 
+    const handleMouseMove = (e) => {
+      targetMouseX = (e.clientX - centerX) * 0.05;
+      targetMouseY = (e.clientY - centerY) * 0.05;
+    };
+
     const randomizeParticle = (p) => {
       p.x = Math.random() * canvasWidth;
       p.y = Math.random() * canvasHeight;
@@ -47,40 +51,23 @@ const ParticleBackground = () => {
       p.vy = (Math.random() - 0.5) * 0.2;
       p.screenX = 0;
       p.screenY = 0;
-      p.pastZ = 0;
       p.radius = 0;
       return p;
     };
 
-    function createParticle(x = 0, y = 0, z = 0) {
-      return {
-        x, y, z,
-        vx: 0, vy: 0,
-        pastZ: 0,
-        screenX: 0, screenY: 0,
-        radius: 0
-      };
-    }
-
     const loop = () => {
-      // Set to solid black to match background
       context.fillStyle = '#000000'; 
       context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-      speed += (targetSpeed - speed) * 0.06;
+      // Smooth mouse parallax
+      mouseX += (targetMouseX - mouseX) * 0.05;
+      mouseY += (targetMouseY - mouseY) * 0.05;
 
-      // Always stay centered
-      currentCenterX = centerX;
-      currentCenterY = centerY;
+      speed += (targetSpeed - speed) * 0.06;
 
       for (let i = 0; i < PARTICLE_NUM; i++) {
         const p = particles[i];
-        p.pastZ = p.z;
         p.z -= speed;
-
-
-        p.x += p.vx;
-        p.y += p.vy;
 
         if (p.z <= 0) {
           randomizeParticle(p);
@@ -88,15 +75,17 @@ const ParticleBackground = () => {
         }
 
         const f = FL / p.z;
-        p.screenX = currentCenterX + (p.x - centerX) * f;
-        p.screenY = currentCenterY + (p.y - centerY) * f;
+        // Apply mouse offset to screen coordinates
+        p.screenX = centerX + (p.x - centerX) * f + mouseX * f;
+        p.screenY = centerY + (p.y - centerY) * f + mouseY * f;
         p.radius = PARTICLE_BASE_RADIUS * f;
       }
 
       // Connections
-      context.lineWidth = 0.5;
       for (let i = 0; i < PARTICLE_NUM; i++) {
         const p1 = particles[i];
+        if (p1.z > 800) continue; // Only connect closer particles for performance
+
         for (let j = i + 1; j < PARTICLE_NUM; j++) {
           const p2 = particles[j];
           const dx = p1.screenX - p2.screenX;
@@ -104,8 +93,8 @@ const ParticleBackground = () => {
           const distSq = dx * dx + dy * dy;
 
           if (distSq < CONNECTION_DIST * CONNECTION_DIST) {
-            const alpha = 1 - (Math.sqrt(distSq) / CONNECTION_DIST);
-            context.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.15})`; 
+            const alpha = (1 - (Math.sqrt(distSq) / CONNECTION_DIST)) * 0.15;
+            context.strokeStyle = `rgba(255, 255, 255, ${alpha})`; // White color
             context.beginPath();
             context.moveTo(p1.screenX, p1.screenY);
             context.lineTo(p2.screenX, p2.screenY);
@@ -134,19 +123,17 @@ const ParticleBackground = () => {
 
     const init = () => {
       resize();
-      
       for (let i = 0; i < PARTICLE_NUM; i++) {
-        const p = randomizeParticle(createParticle());
+        const p = randomizeParticle({ x:0, y:0, z:0, vx:0, vy:0, screenX:0, screenY:0, radius:0 });
         p.z -= 500 * Math.random();
         particles.push(p);
       }
-
       window.addEventListener('resize', resize);
-
+      window.addEventListener('mousemove', handleMouseMove);
       animate();
-      
       return () => {
         window.removeEventListener('resize', resize);
+        window.removeEventListener('mousemove', handleMouseMove);
         cancelAnimationFrame(animationFrameId);
       };
     };
@@ -158,7 +145,7 @@ const ParticleBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full z-0 pointer-events-none"
+      className="fixed inset-0 w-full h-full z-0 pointer-events-none opacity-60"
     />
   );
 };

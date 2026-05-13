@@ -46,5 +46,7 @@ export const updateHome = (data) => api.post('/home', data);
 export const getAbout = () => api.get('/about');
 export const updateAbout = (data) => api.post('/about', data);
 export const getVisitorStats = () => api.get('/stats/visitors');
+export const forgetPassword = (email) => api.post('/forget-password', { email });
+export const resetPassword = (token, password) => api.post(`/reset-password/${token}`, { password });
 
 export default api;

@@ -1,4 +1,5 @@
 import React from "react";
+import { trackAction } from "../../services/tracking.js";
 import { motion } from "framer-motion";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -27,6 +28,7 @@ export default function Contact() {
     initialValues: { name: "", email: "", subject: "", message: "" },
     validationSchema,
     onSubmit: async (values, { resetForm, setSubmitting }) => {
+      trackAction('click', 'Submit Contact Form');
       try {
         const { data } = await sendContactMessage(values);
         if (data.success) {

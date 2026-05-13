@@ -11,6 +11,8 @@ import Projects from './pages/Projects';
 import Skills from './pages/Skills';
 import Contacts from './pages/Contacts';
 import Settings from './pages/Settings';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 // Components
 import Layout from './components/Layout';
@@ -26,6 +28,8 @@ const App = () => {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           
           <Route path="/" element={
             <ProtectedRoute>

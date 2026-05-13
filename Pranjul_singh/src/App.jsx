@@ -10,16 +10,32 @@ const Home = lazy(() => import("./component/home/Home.jsx"));
 const NotFound = lazy(() => import("./component/NotFound.jsx"));
 const TerminalEgg = lazy(() => import("./component/home/TerminalEgg.jsx"));
 
+import { trackAction } from "./services/tracking.js";
+
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
+    // Track initial landing
+    trackAction('view', 'Portfolio Landing');
+
+    // Session Heartbeat (Every 30 seconds)
+    const heartbeat = setInterval(() => {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/heartbeat`, {
+        method: 'POST',
+      }).catch(() => {}); // Silent fail
+    }, 30000);
+
     // Intro timer
     const timer = setTimeout(() => {
       window.scrollTo(0, 0);
       setShowIntro(false);
     }, 4000);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(heartbeat);
+    };
   }, []);
 
   return (

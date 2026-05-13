@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -63,6 +63,11 @@ const Login = () => {
               onChange={handleChange}
               required
             />
+          </div>
+          <div className="forgot-password-link" style={{ marginBottom: '1.5rem', textAlign: 'right' }}>
+            <Link to="/forgot-password" style={{ color: '#10b981', textDecoration: 'none', fontSize: '0.85rem' }}>
+              Forgot Password?
+            </Link>
           </div>
           <button type="submit" disabled={loading} className="login-btn">
             {loading ? 'Authenticating...' : 'Sign In'}

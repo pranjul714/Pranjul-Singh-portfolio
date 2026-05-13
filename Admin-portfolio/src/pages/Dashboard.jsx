@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getProjects, getSkills, getContacts, getVisitorStats } from '../services/api';
-import { Briefcase, Trophy, Mail, Users, Globe, Eye } from 'lucide-react';
+import { Briefcase, Trophy, Mail, Users, Globe, Eye, RotateCcw } from 'lucide-react';
+import { io } from 'socket.io-client';
+import { toast } from 'react-toastify';
+import VisitorMap from '../components/VisitorMap';
 import './Dashboard.css';
+
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -12,35 +17,79 @@ const Dashboard = () => {
     todayVisits: 0
   });
   const [recentVisitors, setRecentVisitors] = useState([]);
+  const [recentActions, setRecentActions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchStats = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    try {
+      const [projRes, skillRes, contactRes, visitorRes] = await Promise.all([
+        getProjects(),
+        getSkills(),
+        getContacts(),
+        getVisitorStats()
+      ]);
+      
+      setStats({
+        projects: projRes.data.length,
+        skills: skillRes.data.length,
+        contacts: contactRes.data.length,
+        totalVisits: visitorRes.data.totalVisits,
+        todayVisits: visitorRes.data.todayVisits
+      });
+      
+      setRecentVisitors(visitorRes.data.latestVisitors || []);
+      setRecentActions(visitorRes.data.recentActions || []);
+    } catch (error) {
+      console.error("Dashboard fetch error:", error);
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [projRes, skillRes, contactRes, visitorRes] = await Promise.all([
-          getProjects(),
-          getSkills(),
-          getContacts(),
-          getVisitorStats()
-        ]);
-        
-        setStats({
-          projects: projRes.data.length,
-          skills: skillRes.data.length,
-          contacts: contactRes.data.length,
-          totalVisits: visitorRes.data.totalVisits,
-          todayVisits: visitorRes.data.todayVisits
-        });
-        
-        setRecentVisitors(visitorRes.data.latestVisitors || []);
-      } catch (error) {
-        console.error("Dashboard fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchStats();
+
+    // Setup Socket Connection
+    const socket = io(SOCKET_URL);
+
+    socket.on('new_visitor', (data) => {
+      // Show professional toast notification for NEW visitor
+      toast.info(`🚀 New Visitor from ${data.city || 'Unknown City'}, ${data.country || 'Unknown'}! (${data.device})`, {
+        position: "bottom-right",
+        autoClose: 5000,
+        theme: "dark",
+      });
+      fetchStats(false);
+    });
+
+    socket.on('visitor_action', (data) => {
+      // Show professional toast for SPECIFIC ACTIONS
+      const actionEmoji = data.type === 'view' ? '👀' : '🎯';
+      toast.success(`${actionEmoji} Activity from ${data.city || 'Visitor'}: ${data.name}`, {
+        position: "bottom-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      fetchStats(false);
+    });
+
+    socket.on('data_updated', (data) => {
+      fetchStats(false);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
+
+  const calculateDuration = (v) => {
+    if (!v.lastActive || !v.createdAt) return '0s';
+    const durationMs = new Date(v.lastActive) - new Date(v.createdAt);
+    const mins = Math.floor(durationMs / 60000);
+    const secs = Math.floor((durationMs % 60000) / 1000);
+    return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+  };
 
   const statCards = [
     { title: 'Total Visits', value: stats.totalVisits, icon: <Eye />, color: '#8b5cf6' },
@@ -70,6 +119,8 @@ const Dashboard = () => {
         ))}
       </div>
 
+      <VisitorMap visitors={recentVisitors} />
+
       <div className="dashboard-content-grid">
         <div className="chart-placeholder glass-card">
           <h3>Traffic Analytics</h3>
@@ -81,42 +132,92 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="recent-activity glass-card">
-          <div className="section-header">
-            <h3>Recent Visitors</h3>
-            <Globe size={18} className="text-emerald-400" />
-          </div>
-          <div className="visitors-table-wrapper">
-            <table className="visitors-table">
-              <thead>
-                <tr>
-                  <th>Location</th>
-                  <th>IP Address</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentVisitors.length > 0 ? (
-                  recentVisitors.map((visitor, index) => (
-                    <tr key={index}>
-                      <td>
-                        <span className="location-text">
-                          {visitor.city}, {visitor.country}
-                        </span>
-                      </td>
-                      <td className="ip-text">{visitor.ip}</td>
-                      <td className="time-text">
-                        {new Date(visitor.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
+        <div className="bottom-grid">
+          <div className="recent-activity glass-card">
+            <div className="section-header">
+              <h3>Recent Visitors</h3>
+              <div className="header-actions">
+                <button 
+                  className={`refresh-btn ${loading ? 'spinning' : ''}`} 
+                  onClick={() => fetchStats()}
+                  title="Refresh Data"
+                >
+                  <RotateCcw size={18} />
+                </button>
+                <Globe size={18} className="text-emerald-400" />
+              </div>
+            </div>
+            <div className="visitors-table-wrapper">
+              <table className="visitors-table">
+                <thead>
                   <tr>
-                    <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>No visitors tracked yet</td>
+                    <th>Location</th>
+                    <th>Device / OS</th>
+                    <th>IP Address</th>
+                    <th>Duration</th>
+                    <th>Time</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {recentVisitors.length > 0 ? (
+                    recentVisitors.map((visitor, index) => (
+                      <tr key={index}>
+                        <td>
+                          <span className="location-text">
+                            {visitor.city}, {visitor.country}
+                          </span>
+                        </td>
+                        <td>
+                          <span className="device-tag">
+                            {visitor.deviceType} / {visitor.os}
+                          </span>
+                        </td>
+                        <td className="ip-text">{visitor.ip}</td>
+                        <td className="duration-text" style={{ color: '#10b981', fontWeight: '600' }}>
+                          {calculateDuration(visitor)}
+                        </td>
+                        <td className="time-text">
+                          {new Date(visitor.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>No visitors tracked yet</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="activity-feed-section glass-card">
+            <div className="section-header">
+              <h3>Live Activity Feed</h3>
+            </div>
+            <div className="feed-container">
+              {recentActions.length > 0 ? (
+                recentActions.map((action, idx) => (
+                  <div key={idx} className="feed-item">
+                    <div className={`feed-icon ${action.type}`}>
+                      {action.type === 'view' ? <Eye size={14} /> : <Rocket size={14} />}
+                    </div>
+                    <div className="feed-content">
+                      <p className="feed-text">
+                        <span className="feed-city">{action.city}</span>
+                        {action.type === 'view' ? ' viewed ' : ' clicked '}
+                        <span className="feed-target">{action.name}</span>
+                      </p>
+                      <span className="feed-time">
+                        {new Date(action.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-feed">No recent activity</div>
+              )}
+            </div>
           </div>
         </div>
       </div>

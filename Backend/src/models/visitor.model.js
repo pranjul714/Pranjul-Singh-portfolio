@@ -21,14 +21,26 @@ const visitorSchema = new mongoose.Schema({
     type: String,
     default: "Unknown"
   },
+  os: {
+    type: String,
+    default: "Unknown"
+  },
+  deviceType: {
+    type: String,
+    default: "Desktop"
+  },
   referrer: {
     type: String,
     default: "Direct"
   },
-  timestamp: {
-    type: Date,
-    default: Date.now
-  }
+  lat: Number,
+  lon: Number,
+  lastActive: { type: Date, default: Date.now },
+  actions: [{
+    type: { type: String }, // 'view' or 'click'
+    name: String,           // page name or button name
+    timestamp: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 export const Visitor = mongoose.model("Visitor", visitorSchema);
