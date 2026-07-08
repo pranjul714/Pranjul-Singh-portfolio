@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [recentVisitors, setRecentVisitors] = useState([]);
   const [recentActions, setRecentActions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [focusedVisitor, setFocusedVisitor] = useState(null);
 
   const fetchStats = async (showLoading = true) => {
     if (showLoading) setLoading(true);
@@ -119,7 +120,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <VisitorMap visitors={recentVisitors} />
+      <VisitorMap visitors={recentVisitors} focusedVisitor={focusedVisitor} />
 
       <div className="dashboard-content-grid">
         <div className="chart-placeholder glass-card">
@@ -135,16 +136,18 @@ const Dashboard = () => {
         <div className="bottom-grid">
           <div className="recent-activity glass-card">
             <div className="section-header">
-              <h3>Recent Visitors</h3>
-              <div className="header-actions">
+              <h1 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Users size={24} className="text-emerald-400" /> Recent Visitors
+              </h1>
+              <div className="header-actions gap-4">
                 <button 
                   className={`refresh-btn ${loading ? 'spinning' : ''}`} 
                   onClick={() => fetchStats()}
                   title="Refresh Data"
                 >
-                  <RotateCcw size={18} />
-                </button>
-                <Globe size={18} className="text-emerald-400" />
+                  <RotateCcw size={30} />
+                </button> 
+                <Globe size={24} className="p-4 ml-2 mr-4 text-emerald-400" />
               </div>
             </div>
             <div className="visitors-table-wrapper">
@@ -155,17 +158,29 @@ const Dashboard = () => {
                     <th>Device / OS</th>
                     <th>IP Address</th>
                     <th>Duration</th>
-                    <th>Time</th>
+                    <th>Date & Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentVisitors.length > 0 ? (
                     recentVisitors.map((visitor, index) => (
-                      <tr key={index}>
+                      <tr 
+                        key={index} 
+                        onClick={() => setFocusedVisitor(visitor)}
+                        style={{ cursor: 'pointer' }}
+                        title="Click to view on map"
+                      >
                         <td>
-                          <span className="location-text">
-                            {visitor.city}, {visitor.country}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span className="location-text">
+                              {visitor.city}, {visitor.country}
+                            </span>
+                            {(visitor.lat && visitor.lon) && (
+                              <span style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '2px', fontFamily: 'monospace' }}>
+                                Lat: {visitor.lat}, Lon: {visitor.lon}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td>
                           <span className="device-tag">
@@ -177,13 +192,13 @@ const Dashboard = () => {
                           {calculateDuration(visitor)}
                         </td>
                         <td className="time-text">
-                          {new Date(visitor.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(visitor.createdAt).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}, {new Date(visitor.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>No visitors tracked yet</td>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>No visitors tracked yet</td>
                     </tr>
                   )}
                 </tbody>
@@ -204,12 +219,12 @@ const Dashboard = () => {
                     </div>
                     <div className="feed-content">
                       <p className="feed-text">
-                        <span className="feed-city">{action.city}</span>
+                        <span className="feed-city">{action.city} <span style={{ color: '#6b7280', fontWeight: 'normal', fontSize: '0.8rem' }}>({action.ip})</span></span>
                         {action.type === 'view' ? ' viewed ' : ' clicked '}
                         <span className="feed-target">{action.name}</span>
                       </p>
                       <span className="feed-time">
-                        {new Date(action.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(action.timestamp).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}, {new Date(action.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </div>

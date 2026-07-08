@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const VisitorMap = ({ visitors }) => {
+const VisitorMap = ({ visitors, focusedVisitor }) => {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markersRef = useRef({});
@@ -58,17 +58,23 @@ const VisitorMap = ({ visitors }) => {
       }
     });
 
-    // Reliable Auto-focus on the LATEST active visitor
-    if (activeVisitors.length > 0 && mapInstance.current) {
-      const latest = activeVisitors[0];
-      const latestMarker = markersRef.current[latest._id || `${latest.lat}-${latest.lon}`];
-      
-      mapInstance.current.setView([latest.lat, latest.lon], 6, { animate: true });
-      if (latestMarker) latestMarker.openPopup();
+    // Auto-focus logic: If there's a focusedVisitor, use it. Otherwise, use the latest visitor on initial load.
+    if (mapInstance.current) {
+      if (focusedVisitor && focusedVisitor.lat && focusedVisitor.lon) {
+        const id = focusedVisitor._id || `${focusedVisitor.lat}-${focusedVisitor.lon}`;
+        const targetMarker = markersRef.current[id];
+        mapInstance.current.setView([focusedVisitor.lat, focusedVisitor.lon], 6, { animate: true });
+        if (targetMarker) targetMarker.openPopup();
+      } else if (activeVisitors.length > 0) {
+        const latest = activeVisitors[0];
+        const latestMarker = markersRef.current[latest._id || `${latest.lat}-${latest.lon}`];
+        mapInstance.current.setView([latest.lat, latest.lon], 6, { animate: true });
+        if (latestMarker) latestMarker.openPopup();
+      }
     }
 
     // Cleanup old markers (if needed)
-  }, [visitors]);
+  }, [visitors, focusedVisitor]);
 
   return (
     <div className="visitor-map-container glass-card">
