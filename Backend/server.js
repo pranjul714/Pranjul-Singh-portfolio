@@ -13,11 +13,14 @@ const io = new Server(httpServer, {
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
       const isAllowed = origin.startsWith("http://localhost") || 
+                        origin.startsWith("http://localhost:5173") || 
                         origin.endsWith(".vercel.app") || 
                         origin.endsWith(".onrender.com");
       if (isAllowed) {
         return callback(null, true);
+
       }
+      console.log("Socket.IO: Not allowed by CORS", origin);
       return callback(new Error("Socket.IO: Not allowed by CORS"));
     },
     methods: ["GET", "POST"],
@@ -38,5 +41,5 @@ app.set("io", io);
 
 // Start Server
 httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });

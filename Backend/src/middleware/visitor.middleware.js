@@ -119,77 +119,86 @@ export const trackVisitor = async (req, res, next) => {
     else if (userAgent.includes("iPad"))     { os = "iPadOS";  deviceType = "Tablet"; }
     else if (userAgent.includes("Linux"))    os = "Linux";
 
-    // ── Deduplication (30 min window) ──────────
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-    const recentVisit = await Visitor.findOne({
-      ip,
-      browser,
-      os,
-      createdAt: { $gte: thirtyMinutesAgo },
-    });
-
-    if (recentVisit) {
-      recentVisit.lastActive = new Date();
-      const fiveMinsAgo    = new Date(Date.now() - 5 * 60 * 1000);
-      const recentAction   = recentVisit.actions.find(a => a.timestamp >= fiveMinsAgo);
-      if (!recentAction) {
-        recentVisit.actions.push({
-          actionType: "view",
-          name:       "Session Active",
-          timestamp:  new Date(),
-        });
-      }
-      await recentVisit.save().catch(() => {});
-      return next();
-    }
-
-    // ── Geo Lookup ─────────────────────────────
-    // Use a real public IP for local development testing
-    const isLocalIp = !ip || ["127.0.0.1", "::1", "localhost"].includes(ip);
-    const targetIp  = isLocalIp ? "122.161.192.1" : ip; // fallback: Delhi IP for local dev
-
-    const geoData = await getGeoData(targetIp);
-
-    if (isLocalIp) {
-      console.log(`[Visitor] Local dev mode — using fallback IP. Geo: ${geoData.city}, ${geoData.country} (via ${geoData.source})`);
-    } else {
-      console.log(`[Visitor] New visitor ${ip} → ${geoData.city}, ${geoData.country} (via ${geoData.source})`);
-    }
-
-    // ── Create Visitor Record ──────────────────
-    const newVisitor = await Visitor.create({
-      ip,
-      city:       geoData.city,
-      region:     geoData.regionName,
-      country:    geoData.country,
-      browser,
-      os,
-      deviceType,
-      referrer,
-      lat:        geoData.lat,
-      lon:        geoData.lon,
-      lastActive: new Date(),
-      actions: [{ actionType: "view", name: "Website Visit", timestamp: new Date() }],
-    });
-
-    // ── Real-time Socket Notification ──────────
-    const io = req.app.get("io");
-    if (io) {
-      io.emit("new_visitor", {
-        _id:     newVisitor._id,
-        ip:      isLocalIp ? "Dev/Local" : ip,
-        city:    newVisitor.city,
-        country: newVisitor.country,
-        device:  newVisitor.deviceType,
-        os:      newVisitor.os,
-        lat:     newVisitor.lat,
-        lon:     newVisitor.lon,
-      });
-    }
-
+    // ── Call next() immediately so we don't block the request ──
     next();
+
+    // ── Run DB and Geo Lookup in the background ────────────────
+    (async () => {
+      try {
+        // ── Deduplication (30 min window) ──────────
+        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+        const recentVisit = await Visitor.findOne({
+          ip,
+          browser,
+          os,
+          createdAt: { $gte: thirtyMinutesAgo },
+        });
+
+        if (recentVisit) {
+          recentVisit.lastActive = new Date();
+          const fiveMinsAgo    = new Date(Date.now() - 5 * 60 * 1000);
+          const recentAction   = recentVisit.actions.find(a => a.timestamp >= fiveMinsAgo);
+          if (!recentAction) {
+            recentVisit.actions.push({
+              actionType: "view",
+              name:       "Session Active",
+              timestamp:  new Date(),
+            });
+          }
+          await recentVisit.save().catch(() => {});
+          return;
+        }
+
+        // ── Geo Lookup ─────────────────────────────
+        // Use a real public IP for local development testing
+        const isLocalIp = !ip || ["127.0.0.1", "::1", "localhost"].includes(ip);
+        const targetIp  = isLocalIp ? "122.161.192.1" : ip; // fallback: Delhi IP for local dev
+
+        const geoData = await getGeoData(targetIp);
+
+        if (isLocalIp) {
+          console.log(`[Visitor] Local dev mode — using fallback IP. Geo: ${geoData.city}, ${geoData.country} (via ${geoData.source})`);
+        } else {
+          console.log(`[Visitor] New visitor ${ip} → ${geoData.city}, ${geoData.country} (via ${geoData.source})`);
+        }
+
+        // ── Create Visitor Record ──────────────────
+        const newVisitor = await Visitor.create({
+          ip,
+          city:       geoData.city,
+          region:     geoData.regionName,
+          country:    geoData.country,
+          browser,
+          os,
+          deviceType,
+          referrer,
+          lat:        geoData.lat,
+          lon:        geoData.lon,
+          lastActive: new Date(),
+          actions: [{ actionType: "view", name: "Website Visit", timestamp: new Date() }],
+        });
+
+        // ── Real-time Socket Notification ──────────
+        const io = req.app.get("io");
+        if (io) {
+          io.emit("new_visitor", {
+            _id:     newVisitor._id,
+            ip:      isLocalIp ? "Dev/Local" : ip,
+            city:    newVisitor.city,
+            country: newVisitor.country,
+            device:  newVisitor.deviceType,
+            os:      newVisitor.os,
+            lat:     newVisitor.lat,
+            lon:     newVisitor.lon,
+          });
+        }
+      } catch (err) {
+        console.error("[Visitor Background Error]", err.message);
+      }
+    })();
+
   } catch (error) {
-    console.error("[Visitor Middleware Error]", error.message);
+    console.error("[Visitor Middleware Sync Error]", error.message);
     next();
   }
 };

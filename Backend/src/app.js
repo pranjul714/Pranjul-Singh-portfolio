@@ -100,55 +100,62 @@ app.get("/", (req, res) => {
 app.use("/api/admin", adminRoutes);
 
 // ── Action Tracking Route ─────────────────────────────────────────
-app.post("/api/track", async (req, res) => {
-  try {
-    const { type, name } = req.body;
-    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
-    if (ip.includes(',')) ip = ip.split(',')[0].trim();
-    if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+app.post("/api/track", (req, res) => {
+  // Respond immediately to prevent latency on frontend
+  res.status(200).json({ success: true });
 
-    // Find the latest visitor record for this IP within the last 24 hours (more lenient)
-    const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const visitor = await Visitor.findOne({ ip, createdAt: { $gte: dayAgo } }).sort({ createdAt: -1 });
+  (async () => {
+    try {
+      const { type, name } = req.body;
+      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
+      if (ip.includes(',')) ip = ip.split(',')[0].trim();
+      if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
 
-    if (visitor) {
-      visitor.actions.push({ actionType: type, name });
-      await visitor.save();
-      
-      // Notify admin live that an action happened
-      const io = req.app.get("io");
-      if (io) {
-        io.emit("visitor_action", {
-          ip,
-          type,
-          name,
-          city: visitor.city
-        });
+      // Find the latest visitor record for this IP within the last 24 hours (more lenient)
+      const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const visitor = await Visitor.findOne({ ip, createdAt: { $gte: dayAgo } }).sort({ createdAt: -1 });
+
+      if (visitor) {
+        visitor.actions.push({ actionType: type, name });
+        await visitor.save();
+        
+        // Notify admin live that an action happened
+        const io = req.app.get("io");
+        if (io) {
+          io.emit("visitor_action", {
+            ip,
+            type,
+            name,
+            city: visitor.city
+          });
+        }
       }
+    } catch (error) {
+      console.error("Tracking Error:", error.message);
     }
-    res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Tracking Error:", error);
-    res.status(500).json({ success: false });
-  }
+  })();
 });
 
 // ── Session Heartbeat Route ───────────────────────────────────────
-app.post("/api/heartbeat", async (req, res) => {
-  try {
-    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
-    if (ip.includes(',')) ip = ip.split(',')[0].trim();
-    if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+app.post("/api/heartbeat", (req, res) => {
+  // Respond immediately
+  res.status(200).json({ success: true });
 
-    const visitor = await Visitor.findOne({ ip }).sort({ createdAt: -1 });
-    if (visitor) {
-      visitor.lastActive = new Date();
-      await visitor.save();
+  (async () => {
+    try {
+      let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || "";
+      if (ip.includes(',')) ip = ip.split(',')[0].trim();
+      if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+
+      const visitor = await Visitor.findOne({ ip }).sort({ createdAt: -1 });
+      if (visitor) {
+        visitor.lastActive = new Date();
+        await visitor.save();
+      }
+    } catch (error) {
+      console.error("Heartbeat Error:", error.message);
     }
-    res.status(200).json({ success: true });
-  } catch (error) {
-    res.status(500).json({ success: false });
-  }
+  })();
 });
 
 // Contact Route with spam rate limiting

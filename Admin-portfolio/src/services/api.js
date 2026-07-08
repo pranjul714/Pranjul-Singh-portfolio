@@ -5,7 +5,7 @@ const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/
 
 const api = axios.create({
   baseURL: `${BASE}/api/admin`,
-  timeout: 10000,
+  timeout: 60000, // Increased to 60s for free-tier backend cold starts
 });
 
 // Auto-attach JWT token to every request

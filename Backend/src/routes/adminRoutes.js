@@ -63,6 +63,15 @@ router.get("/contacts", protect, async (req, res) => {
   }
 });
 
+// @route   GET /api/admin/login
+// @desc    Inform clients that login uses POST with credentials
+router.get("/login", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Use POST /api/admin/login with username and password"
+  });
+});
+
 // @route   POST /api/admin/login
 // @desc    Admin login & get token
 router.post("/login", async (req, res) => {
@@ -111,8 +120,10 @@ router.post("/forget-password", async (req, res) => {
       }
     });
 
-    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/reset-password/${token}`;
+    const clientUrl = (process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost')) ? process.env.FRONTEND_URL : (req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173');
+    const resetLink = `${clientUrl}/reset-password/${token}`;
 
+   
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
