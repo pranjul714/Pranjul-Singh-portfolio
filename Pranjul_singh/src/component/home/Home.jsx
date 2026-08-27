@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import Navbar from "../Navbar/Navbar.jsx";
 import ParticleBackground from "../ParticleBackground.jsx";
+import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollToPlugin);
 
 
 // Lazy Load Sections for Performance
@@ -28,7 +32,11 @@ export default function Home() {
   const scrollToSection = (sectionId) => {
     const targetRef = sectionRefs[sectionId];
     if (targetRef && targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: "smooth" });
+      gsap.to(window, {
+        duration: 1.2,
+        scrollTo: { y: targetRef.current, offsetY: 80 },
+        ease: "power3.inOut"
+      });
     }
   };
 

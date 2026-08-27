@@ -43,10 +43,10 @@ export default function MainPage({ scrollToSection }) {
   };
 
   return (
-    <section className="relative min-h-screen w-full flex flex-col items-center justify-center pt-10 overflow-hidden backdrop-blur-[4px]">
+    <section className="relative min-h-screen w-full flex flex-col items-center justify-center pt-10 overflow-hidden">
 
       {/* Background Aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[140px] -z-10" />
+      <div className="" />
 
       <motion.div
         variants={container}
@@ -59,10 +59,10 @@ export default function MainPage({ scrollToSection }) {
         <motion.div
           aria-hidden="true"
           variants={item}
-          className="text-[15vw] lg:text-[13vw] font-black text-white leading-[0.8] tracking-tighter uppercase z-0 mb-[-2vw]"
+          className="text-[9vw] lg:text-[13vw] font-black text-white leading-[0.8] tracking-tighter uppercase z-0 mb-[-2vw]"
         >
           <TextType 
-            text="Full-Stack"
+            text={["Full-Stack ","React"]}
             typingSpeed={100}
             showCursor={false}
           />

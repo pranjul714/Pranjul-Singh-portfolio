@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   background: transparent;
   backdrop-filter: none;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: none;
   box-shadow: none;
   scroll-margin-top: 6rem;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -35,7 +35,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-style:hover {
-  border-color: rgba(16, 185, 129, 0.3);
   transform: translateY(-5px);
   box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.9);
 }
